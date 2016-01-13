@@ -1,0 +1,44 @@
+# Introduction to Engineering Statistics and R 
+Engineering Statistics (IMSE 4410) Spring 2016. 
+Copyright 2013-2016 by Timothy Middelkoop License CC by SA 3.0
+
+## Class Software Test
+ 1. Install Software
+ 2. Clone project
+ 3. Simple Calculation `3+4`
+ 3. Knit HTML
+ 4. Knit PDF
+ 5. Write your own.
+
+### Markdown.
+
+You can make lists (blank line below is required)
+
+ * First
+ * Second
+    1. Indented number list one
+    1. Two (number don't matter)
+
+### Inline code
+You can add in R `3+4`=`r 3+4`.
+
+### Equations
+You can do inine equations $3+4$ and larger ones
+$$\sum_{k=0}^{\infty}x^2+\alpha_k \over \pi$$.
+The code is based on LaTeX.
+
+### R Session
+```{r}
+3 + 4
+
+d <- read.csv("stats-2016-spring-L00-data.csv",header=TRUE)
+d
+
+d$x+d$y
+
+```
+
+### Shortcuts
+ * Control+R in the document runs the code in the console
+ * Control+Shift+k on windows to rebuild the document
+ 
