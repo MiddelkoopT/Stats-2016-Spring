@@ -1,0 +1,49 @@
+# Introduction to Engineering Statistics and R 
+Engineering Statistics (IMSE 4410) Spring 2016. 
+Copyright 2013-2016 by Timothy Middelkoop License CC by SA 3.0
+
+## Class 2016-01-25
+
+```{r}
+# Smimple sum
+11+12+13+14
+
+11+12+13+14/4
+# no not correct
+
+(11+12+13+14)/4
+# 12.5 is the answer
+# Correct
+
+# create a vector
+x <- c(11,12,13,14) ; x
+
+n <- length(x) ; n
+sum(x)/n
+
+mean(x)
+
+
+```
+
+Data
+
+```{r}
+x[2]
+
+d <- read.csv("http://www.cyclismo.org/tutorial/R/_static/simple.csv", header=TRUE)
+d
+d[1,2]
+names(d)
+d$mass
+mean(d$mass)
+x <- c(d$mass)
+mean(x)
+
+```
+
+
+mean is $$\bar x = \sum_{i=1}^{n} x_i$$
+
+
+
