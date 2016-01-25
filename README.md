@@ -13,7 +13,7 @@ Introduction, syllabus, expectations, and overview of R.
   * Direct link for windows 64 bit https://github.com/git-for-windows/git/releases/download/v2.7.0.windows.1/Git-2.7.0-64-bit.exe
   * When installing and on the "Adjusting your PATH Environment" screen select "Use Git from the Windows Command Prompt"
  * Optional Download and install MikTeX for RStudio PDF support http://miktex.org/download/
-  * Direct link for windows 64 bit http://mirrors.ctan.org/systems/win32/miktex/setup/basic-miktex-2.9.5823-x64.exe
+  * Direct link for windows 64 bit http://mirrors.ctan.org/systems/win32/miktex/setup/basic-miktex-x64.exe
   * When installing select "Install for anyone on the computer" and select "Letter" paper when asked.
 
 
