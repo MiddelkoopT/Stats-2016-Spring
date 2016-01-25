@@ -27,6 +27,10 @@ Introduction, syllabus, expectations, and overview of R.
 
 ## Resources
 
+ * R in data carpentry and software carpentry 
+    * http://swcarpentry.github.io/r-novice-inflammation/
+    * http://swcarpentry.github.io/r-novice-gapminder/
+    * http://www.datacarpentry.org/R-ecology/
  * R tutorial/stats http://www.cyclismo.org/tutorial/R/
  * R project introduction http://cran.r-project.org/doc/manuals/R-intro.html
 
