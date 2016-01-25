@@ -1,0 +1,93 @@
+# Introduction to Engineering Statistics and R 
+Engineering Statistics (IMSE 4410) Spring 2016. 
+Copyright 2013-2015 by Timothy Middelkoop License CC by SA 3.0
+
+## Chapter 6 - Descriptive Statistics
+
+### Sample Mean (6-1)
+Simple descriptions of data.
+```{r}
+x <- c(12.6,12.9,13.4,12.3,13.6,13.5,12.6,13.1)
+# Verify the size of the data.
+length(x)
+# View the data to get a feel of it.
+plot(x)
+# Verify the analisys.
+sum(x)
+sum(x)/length(x)
+# Do it the R way.
+mean(x)
+```
+This the sample mean, which is different from the population mean!
+
+What is the population mean?  Can we estimate this from the sample mean? It turns out Yes.
+
+$$\mu=\sum_{i=1}^N x_i$$
+
+mu=sum(xi)/N
+
+### Sample Variance (6-1)
+What's this?
+
+Sample Variance is defined as.  Note the Sample and the s^2.
+
+$$s^2 = {\sum_{i=1}^n (x_i-\bar x)^2 \over n-1}$$
+
+s2=sum((xi-xb)^2)/(n-1) 
+
+Calculation:
+```{r}
+x
+xb <- mean(x) ; xb
+
+# compute and verify
+x-xb
+# Test your knoledge
+sum(x-xb)
+# sqared, note the extra brackets.
+sum((x-xb)^2)
+# this is why...
+sum(x-xb)^2
+# OH.
+
+# Keep this around
+n <- length(x) ; n
+
+# skip a step
+s2 <- sum((x-xb)^2)/(n-1) ; s2
+## 0.2285714
+
+## note the similarity between our equation above and what we just did.
+
+# We will not be using the "short" hand calculation way in this class.
+
+## sample standard deviation.
+s <- sqrt(s2) ; s
+## 0.4780914
+
+# Verify with text.
+
+# Verfy manual
+# ?sd
+
+# The R Way
+sd(x)
+
+```
+
+### Population Variance (6-1)
+
+Population Variance and Sample variance are NOT this same.
+
+Population Variance:
+$$\sigma^2 = {\sum_{i=1}^N (x_i-\bar x)^2 \over N}$$
+
+Note the differences, including n.
+
+### Degrees of Freedom. (6-1)
+
+The term (n-1) is used in the sample since we use $\bar x$ (xb).  This is also because if we use this we would consistently underestimate $s^2$.  This is also because of the concept of _degrees of freedom_, we can determine any one term if we remove it (calculate backwards).
+
+### Sample Range.
+
+For completeness the sample range r=max(x)-min(x), which is practically R code and is 1.3.

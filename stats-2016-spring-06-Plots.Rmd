@@ -1,0 +1,85 @@
+# Introduction to Engineering Statistics and R 
+Engineering Statistics (IMSE 4410) Spring 2016.
+Copyright 2013-2016 by Timothy Middelkoop License CC by SA 3.0
+
+## Chapter 6 - Plots
+
+### Example Data (6-2)
+
+Got data?
+```{r}
+#ch06 <- read.csv("http://raw.github.com/MiddelkoopT/Stats-2015-Spring/master/data/5e/ch06.csv",header=TRUE)
+ch06 <- read.csv("data/5e/ch06.csv",header=TRUE)
+nrow(ch06)
+#names(ch06)
+
+# Get some data (both are the same)
+x <- ch06$Table6.2 ; x
+x <- ch06$Example6.4Strength ; x
+
+# NA's are Not Available, absense of a sample. Not Zero!
+x+1
+# Due to the way the data is release it fill's in NA's on us.
+x <- na.omit(ch06$Table6.2) ; x
+# always look at the data.
+plot(x)
+mean(x) ; sd(x)
+```
+
+### Stem-And-Leaf (6-2)
+
+```{r}
+stem(x)
+summary(x)
+```
+
+### Histograms (6-3)
+
+```{r}
+# Figure 6-7
+hist(x)
+
+# Suggest more breaks
+hist(x,breaks=9)
+
+# Close, lets be specific. (start at 70, end at 250, by 20)
+bins <- seq(70,250,20) ; bins
+hist(x,breaks=bins)
+
+# Yes, that's it.  We can do more with it
+h <- hist(x,breaks=bins) ; plot(h)
+names(h)
+h$counts
+h$density
+
+x[x>=230]
+length(x)
+
+# I know, not typing numbers but.
+(2/80)/20
+
+# The twenty comes from the witdth, 
+h$counts/length(x)/20
+h$density
+
+# looks the same.  Subtract to be sure
+
+
+```
+
+
+### Box Plots (6-4)
+```{r}
+# data from last chunk.
+
+# Figure 6-4/Table 6-2
+boxplot(x)
+summary(x)
+```
+
+### Time Sequence Plots(6-5)
+```{r}
+plot(x)
+plot(x,type='l')
+
+```
