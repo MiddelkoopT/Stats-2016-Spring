@@ -63,14 +63,14 @@ parameters of $\mu$ and $\sigma$ or $N(\mu,\sigma)$
 $$ E(X)=\mu, V(X)=\sigma^2$$
 
 * Standard norm, so we can use the tables, is $\mu=0$, $\sigma^2=1$
-* Random variable for the standard norm is Z, cumulative function Φ(z)=P(Z<=z)
+* Random variable for the standard norm is Z, cumulative function $\Phi$(z)=P(Z<=z)
 
 ```{r}
 # The normal distribution is the rnorm series
 hist(rnorm(1e6))
 
 # What is P(Z<=1.5)
-# Φ(1.5)
+# Phi(1.5)
 # Tables... 0.933139
 # or use
 pnorm(1.5)
