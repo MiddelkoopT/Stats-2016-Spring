@@ -64,3 +64,6 @@ There are no proofs, but I expect you to understand where everything comes from 
  * "Applied Statistics and Probability for Engineers," 5th Edition By Douglas C. Montgomery and George C. Runger.  March 2010. http://www.wiley.com/WileyCDA/WileyTitle/productCd-EHEP001610,subjectCd-ST23.html
  * "EZ-101 Statistics (EZ-101 Study Keys)," 2nd Edition By Martin Sternstein Ph.D, Barron's Educational Series October 1, 2005. 978-0764129155
  * FE Reference Handbook: http://ncees.org/exams/study-materials/download-fe-supplied-reference-handbook/
+
+## Links
+ * RSS Feed for the Gihub Repository: https://github.com/MiddelkoopT/Stats-2016-Spring/commits/master.atom 
