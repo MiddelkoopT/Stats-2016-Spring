@@ -1,0 +1,15 @@
+# Introduction to Engineering Statistics and R 
+Engineering Statistics (IMSE 4410) Spring 2016.
+Copyright 2013-2016 by Timothy Middelkoop License CC by SA 3.0
+
+## Plots - Chapter 6
+
+### Example Data (6-2)
+
+Got data?
+```{r}
+#ch06 <- read.csv("http://raw.github.com/MiddelkoopT/Stats-2016-Spring/master/data/5e/ch06.csv",header=TRUE)
+ch06 <- read.csv("data/5e/ch06.csv",header=TRUE)
+nrow(ch06)
+#names(ch06)
+```

@@ -1,0 +1,20 @@
+# Introduction to Engineering Statistics and R 
+Engineering Statistics (IMSE 4410) Spring 2016. 
+Copyright 2013-2015 by Timothy Middelkoop License CC by SA 3.0
+
+## Descriptive Statistics - Chapter 6 - In class
+
+```{r}
+x <- c(12.6,12.9,13.4,12.3,13.6,13.5,12.6,13.1)
+xb <- mean(x)
+n <- length(x)
+sqrt(sum((x-xb)^2)/(n-1))
+sd(x)
+
+# Range
+max(x)
+min(x)
+r <- max(x)-min(x) ; r
+
+
+```

@@ -4,6 +4,8 @@ Copyright 2013-2015 by Timothy Middelkoop License CC by SA 3.0
 
 ## Descriptive Statistics - Chapter 6
 
+Sample mean is $$\bar x =  \sum_{i=1}^n { x_i \over n }$$
+
 ### Sample Mean (6-1)
 Simple descriptions of data.
 ```{r}
