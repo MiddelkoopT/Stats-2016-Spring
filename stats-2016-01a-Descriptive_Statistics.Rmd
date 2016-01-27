@@ -2,7 +2,7 @@
 Engineering Statistics (IMSE 4410) Spring 2016. 
 Copyright 2013-2015 by Timothy Middelkoop License CC by SA 3.0
 
-## Chapter 6 - Descriptive Statistics
+## Descriptive Statistics - Chapter 6
 
 ### Sample Mean (6-1)
 Simple descriptions of data.

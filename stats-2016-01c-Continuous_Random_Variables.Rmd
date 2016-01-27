@@ -1,0 +1,124 @@
+# Engineering Statistics
+IMSE 4410 Spring 2016. 
+Copyright 2013-2016 by Timothy Middelkoop License CC by SA 3.0
+
+## Review of Continuous Random Variables - Chapter 4
+
+### Uniform Random Variables.
+
+```{r}
+# What is a "random" number.  Dice is discrete, uniform. Here is the continuous version.
+# 100 (r)andom (unif)orm numbers stored in x
+x <- runif(20) ; x
+# visualize
+plot(x)
+hist(x)
+# Close, lets make the numbers a bit larger 
+x <- runif(100000)
+h <- hist(x)
+summary(x)
+# Looks good
+
+# This histogram is the discrete probably density function.
+# Lets roll a continuous 6 sided dice
+x <- runif(100,1,6)
+hist(x,breaks=0:7)
+# breaks are done explicitly
+0:7
+# Is is that what you expected?
+x <- runif(100,1,7)
+hist(x)
+# probability for discrete version is 
+1/6
+# (d)ensity for the (unif)orm version (d=P(X==x) [density])
+dunif(1:6,1,7)
+# verify the property that the area under the curve=1
+(1/6)*(7-1)
+# ok so we did not need a calculator but you get the point.
+# What is the probability of rolling a 1 or less?
+# What is the probability of rolling a 6 or less?
+punif(1,1,7)
+punif(7,1,7)
+# How about between 2 and 3
+
+# Sound familiar?  What about the reverse, at what is P[x<=q]=0.50?
+qunif(0.50,1,7)
+# Look at the chart, does this make sense?
+
+```
+
+
+Review of R functions:
+
+* runif(n,...) - random values drawn from the distribution.
+* dunif(x,...) - the fx (probably density function - pdf) values
+* punif(q,...) - the Fx (cumulative distribution function - cdf) values P(X<=x)
+* qunif(p,...) - the inverse cdf values (quantile), find q given P(X<=q)==p
+
+### Random Normal Distribution
+
+$$ f(x) = {1 \over \sqrt{2\pi\sigma}} e^{-(x-\mu)^2 \over 2\sigma^2} , -\infty < x < \infty $$
+parameters of $\mu$ and $\sigma$ or $N(\mu,\sigma)$
+
+$$ E(X)=\mu, V(X)=\sigma^2$$
+
+* Standard norm, so we can use the tables, is $\mu=0$, $\sigma^2=1$
+* Random variable for the standard norm is Z, cumulative function Φ(z)=P(Z<=z)
+
+```{r}
+# The normal distribution is the rnorm series
+hist(rnorm(1e6))
+
+# What is P(Z<=1.5)
+# Φ(1.5)
+# Tables... 0.933139
+# or use
+pnorm(1.5)
+
+# Z=(X-mu)/sigma
+mu <- 5 ; sigma <- 3
+# find P(X<=5.5) should be close to zero and positive.
+pnorm((5.5-mu)/sigma)
+# [1] 0.5661838
+# Note the use of the solution in the code.  This is called a "Known Good Solution"
+# No need to convert to standard norm
+pnorm(5.5,mean=mu,sd=sigma)
+```
+
+### Exponential Distribution
+
+
+The other real useful distribution is the exponential distribution.
+
+* $\mu=1/\lambda$, $var=1/\lambda^2$
+* Memoryless
+* Units must be the same.
+* $1/\lambda$ is the mean interarrival time (time between events)
+* $\lambda$ is the mean arrival rate (events/time)
+
+
+$$ f(x) = \lambda e^{-\lambda x} , 0 \le x < \infty $$
+
+$\mu = E(X) = {1 \over \lambda}$ and $\sigma^2 = V(X) = {1 \over \lambda^2}$
+
+It is important to use consistant units for $X$ and $\lambda$.
+
+```{r}
+# Example: 5 students per hour (1 every 12 min, 1 every .2 hour)
+x <- rexp(1000,5)
+hist(x)
+# Look at the results
+mean(x)
+var(x)
+# Now from the tables.
+# What is the probablility that a student will come in in the next 6 min 
+# This is .1 hours.
+# P(X<=0.1)
+pexp(.1,5)
+pexp(.2,5)
+## Does this make sence?
+n <- length(x)
+h <- hist(x)
+names(h)
+cumsum(h$counts/n)
+```
