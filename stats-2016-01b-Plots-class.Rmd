@@ -11,5 +11,43 @@ Got data?
 #ch06 <- read.csv("http://raw.github.com/MiddelkoopT/Stats-2016-Spring/master/data/5e/ch06.csv",header=TRUE)
 ch06 <- read.csv("data/5e/ch06.csv",header=TRUE)
 nrow(ch06)
-#names(ch06)
+names(ch06)
+
+# Import the data
+x <- ch06$Table6.2 ; x
+n <- length(x) ; n
+x <- na.omit(ch06$Table6.2) ; x
+n <- length(x) ; n
+
+# Plot the data
+plot(x)
+hist(x)
+# wrong size, lets try 9 bins
+hist(x,breaks=9)
+# explicit bins
+bins <- seq(70,250,20) ; bins
+hist(x,breaks=bins)
+
+# grab the object information
+h <- hist(x,breaks=bins)
+names(h)
+h$counts
+
+h <- hist(x,breaks=bins,right=FALSE)
+h$counts
+
+h$density
+sum(h$density)
+
+h$density
+h$count/n/20
+
+h$count/n
+
+sum(h$count)/n
+
+# BoxPlots
+boxplot(x)
+
+
 ```
