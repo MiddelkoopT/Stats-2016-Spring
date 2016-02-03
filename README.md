@@ -13,6 +13,7 @@ Introduction, syllabus, expectations, and overview of R.
   * Direct link for windows 64 bit https://github.com/git-for-windows/git/releases/download/v2.7.0.windows.1/Git-2.7.0-64-bit.exe . When installing and on the "Adjusting your PATH Environment" screen select "Use Git from the Windows Command Prompt"
   * In Windows select Tools -> Global Options -> Git/SVN -> Git Execututable.  If it does not show "C:/Program Files/Git/bin/git.exe" then push browse and select "This PC -> C: -> Program Files -> Git -> bin -> git" (or git.exe).  Select OK and Apply and restart RStudio.  Use instructions below for Github project  
   * In OSX select Tools -> Global Options -> Git/SVN -> Git Execututable (Browse).  Press "Command + Shift + G" and enter "/usr/bin" in the pop up then select git then press Apply and OK The Git Executeable should now read "/usr/bin/git". Press Apply.  Restart Rstudio and install "Developer Tools Software".  Restart RStudio again.  Use instuctions below for Github project.
+  * To download/clone in RStudio using git select File > New Project > Version Control > Git and enter "https://github.com/MiddelkoopT/Stats-2016-Spring" in Repository URL.
  * Optional Download and install MikTeX for RStudio PDF support http://miktex.org/download/
   * Direct link for windows 64 bit http://mirrors.ctan.org/systems/win32/miktex/setup/basic-miktex-x64.exe
   * When installing select "Install for anyone on the computer" and select "Letter" paper when asked.
