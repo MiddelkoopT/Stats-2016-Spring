@@ -1,0 +1,30 @@
+---
+title: "Homework Example"
+author: "Timothy Middelkoop"
+date: "Wednesday, February 03, 2016"
+output: html_document
+---
+
+## Homework Example
+
+This is an example of how to get a random valule from the normal distribution where $\mu=4$ and $\sigma=2$
+
+
+```{r}
+rnorm(1,mean=4,sd=2)
+```
+
+### Loading data
+```{r}
+ch06 <- read.csv("data/5e/ch06.csv",header=TRUE)
+nrow(ch06)
+names(ch06)
+
+x <- na.omit(ch06$Table6.2) ; x
+
+n <- length(x) ; n
+
+
+```
+
+

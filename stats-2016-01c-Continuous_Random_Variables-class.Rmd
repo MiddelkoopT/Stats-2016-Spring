@@ -1,0 +1,55 @@
+# Engineering Statistics
+IMSE 4410 Spring 2016. 
+Copyright 2013-2016 by Timothy Middelkoop License CC by SA 3.0
+
+## Review of Continuous Random Variables - Chapter 4
+
+```{r}
+x <- runif(1000,1,7) ; x
+
+plot(x)
+hist(x)
+hist(x,breaks=0:8)
+hist(x,breaks=0:8,right=TRUE)
+
+dunif(2,1,7)
+1/6
+
+dunif(0:8,1,7)
+
+punif(7,1,7)
+punif(4,1,7)
+punif(1,1,7)
+punif(2,1,7)
+
+qunif(1,1,7)
+qunif(0,1,7)
+qunif(2/6,1,7)
+
+```
+
+## Normal Distribution
+
+```{r}
+rnorm(20)
+plot(rnorm(1000))
+
+x <- rnorm(1000) 
+hist(x)
+
+pnorm(0)
+pnorm(1)-pnorm(-1)
+
+pnorm(1)
+pnorm(1.5)
+qnorm(0.881)
+pnorm(-1)
+1-pnorm(1)
+
+pnorm(6)-pnorm(-6)
+pnorm(3)-pnorm(-3)
+pnorm(4)-pnorm(-4)
+
+pnorm(5,mean=5,sd = 2,lower.tail = TRUE)
+
+```
