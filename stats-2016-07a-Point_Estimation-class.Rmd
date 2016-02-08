@@ -1,0 +1,43 @@
+# Introduction to Engineering Statistics and R 
+Engineering Statistics (IMSE 4410) Spring 2016. 
+Copyright 2013-2016 by Timothy Middelkoop License CC by SA 3.0
+
+## Point Estimation - Chapter 7
+
+```{r}
+a <- 8
+x <- runif(10,0,a) ; x
+x <- runif(100,0,a)
+plot(x)
+hist(x)
+
+A <- max(x) ; A
+A <- max(runif(1,0,a)) ; A
+
+```
+
+## Centeral Limit Theorem
+
+
+```{r}
+a <- 8
+
+# Example of the distribution
+x <- runif(1000,0,a) 
+hist(x)
+mean(x)
+
+x <- runif(5,0,a) ; mean(x)
+d <- replicate(1000,mean(runif(5,0,a))) ; hist(d)
+
+d <- replicate(1000,mean(runif(500,0,a))) ; hist(d)
+
+
+```
+
+
+
+
+
+
+```
