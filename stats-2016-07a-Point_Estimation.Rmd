@@ -4,15 +4,13 @@ Copyright 2013-2016 by Timothy Middelkoop License CC by SA 3.0
 
 ## Point Estimation - Chapter 7
 
-Estimating a distributions parameters ($\lambda$, a, b, etc) from a sample of
-the population is called point estimation.  These estimates are also random 
-variables and such have a distribution (with mean and variance).  In most cases
-after a sufficiently large (from 4+ to 30+) number of samples the distribution
-of the point estimators is normal.  This is a result of the Central Limit Theorem.
+Estimating a distributions parameters ($\lambda$, $a$, $b$, etc) from a sample of
+the population is called point estimation.  The estimates use the "hat" notation to indicate that they are an estimate (note the distinction between the estimate of the mean of the population and the sample mean), for example ($\hat\lambda$, $\hat a$, $\hat b$, etc).  We represent the unknown parameter by $\Theta$ and the estimate as $\hat\Theta$.  These estimates are also random variables and such have a distribution (with mean and variance).  In most cases after a sufficiently large (from 4+ to 30+) number of samples the distribution of the point estimators is normal.  This is a result of the Central Limit Theorem.
+
+Examples of point estimators include the mean ($\mu$) of a single population, and a reasonable point estimate for $\mu$ is $\hat\mu=\bar x$.
 
 An estimator is considered unbiased if the mean of the estimator is the mean
-of the sample population.
-An estimator that has less variance is considered better than one that has more.
+of the sample population. An estimator that has less variance is considered better than one that has more.
 
 There are a number of techniques of constructing estimators, Method of Moments and
 Maximum Likelihood (MLE) for example, and they can be found in the text.
@@ -34,15 +32,16 @@ $$\sigma^2 = {1 \over n  \sum (x_i-\bar x)^2}$$.
 
 This material is too sophisticated to cover in a single class
 Practically we will not be developing our own MLE functions.
-Look at section on Point Estimation for more details.  Graduate students will be responsible for this material.
+Look at section on Point Estimation for more details.  Please spend some quiet time to understand this material as it helps build understanding.  Graduate students will be responsible for this material.
 
 What is important is the fact that point estimators exist, and they are
 random variables that tend towards the normal function.
 
 ### MLE Uniform Distribution Example
 
-A simple and powerful example is for the uniform distribution.
-Assume we have a uniform distribution from 0 to a. From the text the MLE point estimator is $\hat a=max(x)$  We will use A for $\hat a$.
+A simple and powerful example is for the uniform distribution.  Assume we have a uniform distribution from $0$ to $a$.  The density function is $f(x)=1/a$ for $0 \le x \le a$. From the text the MLE point estimator is $\hat a=max(x)$. We will use A for $\hat a$.
+
+For the sake of completeness $$L(a)=\prod_{i=1}^{n} { 1 \over a } = {1\over{a^n}}$$ 
 
 ```{r}
 # From the text the MLE point estimator is ahat=max(x)
@@ -58,26 +57,6 @@ A <- max(d) ; A
 # close
 # Lets try for a large n
 max(runif(10000,0,a))
-# close, sample size has an effect, lets see what.
-# Remember the point estimator is a random variable
-# A single instance
-max(runif(1,0,a))
-
-# replicate 
-d <- replicate(100,max(runif(1,0,a))) ; hist(d)
-# not very interesting, think what the max of a single number reduces to.
-
-## lets try a few more with larger n
-d <- replicate(1000,max(runif(100,0,a))) ; hist(d)
-
-# Those of you who program may find the above line a bit disturbing.
-# in the replicate function the second argument is evaluated late (just a bit of magic).
-
-# Here is what the replicate function reduces to. [optional/graduate]
-x <- numeric(0)
-for (i in 1:1000) x[i] <- max(runif(100,0,a))
-hist(x)
-
 ```
 
 Things to remember:
@@ -87,4 +66,41 @@ Things to remember:
 * Point estimators are random variables
 * To replicate calculations use the replicate function.
 
+### Example of the Central Limit Theorem.
 
+The point estimators are also a random variable and in most cases are normally distributed.
+
+
+```{r}
+a <- 8
+# Always inspect and visualize
+x <- runif(100,0,a) 
+plot(x)
+hist(x)
+
+# A single sampmle
+x <- runif(1,0,a) ; x
+mean(x)
+
+# Multiple samples
+x <- runif(5,0,a) ; x
+mean(x)
+
+# Many samples
+x <- runif(500,0,a) 
+mean(x)
+
+# replicate a single sample
+d <- replicate(1000,mean(runif(1,0,a))) ; hist(d)
+
+# replicate multiple samples
+d <- replicate(1000,mean(runif(100,0,a))) ; hist(d)
+
+# Those of you who program may find the above line a bit disturbing.
+# in the replicate function the second argument is evaluated late (just a bit of magic).
+
+# Here is what the replicate function reduces to. [optional/graduate]
+x <- numeric(0)
+for (i in 1:1000) x[i] <- max(runif(100,0,a))
+hist(x)
+```

@@ -1,0 +1,108 @@
+# Introduction to Engineering Statistics and R 
+Engineering Statistics (IMSE 4410) Spring 2016. 
+Copyright 2013-2016 by Timothy Middelkoop License CC by SA 3.0
+
+## Homework 01
+
+Chapter 6 (5e):
+
+1. Exercise 6-2, 6-4, 6-5, 6-9 and 6-11 (by hand, by calculated R, by R function), 6-13
+2. Exercise 6-23, 6-33, 6-45, 6-49, 6-53.
+
+A future assignment will require you to demonstrate that you can use RStudio, R and Rmd files.
+
+### Section 6-1
+
+```{r}
+ch06 <- read.csv("data/5e/ch06.csv",header=TRUE)
+nrow(ch06)
+#names(ch06)
+
+```
+
+```{r}
+# 6-9
+# Load data
+x <- na.omit(ch06$EX.6.9);
+# Size of the array
+n <- length(x) ; n
+# compute mean
+sum(x)/n
+# R function way
+xb <- mean(x) ; xb
+# compute sample standard deviation
+(xb-x)
+# sample variance
+sum((xb-x)^2)/(n-1)
+# r function
+var(x)
+# sample standard deviation
+sqrt(sum((xb-x)^2)/(n-1))
+sd(x)
+
+```
+
+
+```{r}
+# 6-11
+x <- na.omit(ch06$EX.6.11);
+# Similar to 6-9; verify solution with text.
+mean(x)
+sd(x)
+```
+
+### Section 6-2 and 6-3
+
+```{r}
+# 6-23
+x <- na.omit(ch06$EX.6.23); 
+stem(x)
+summary(x)
+# It might survive, but not all that likely.
+# Statistics is more than just stat's, it's about making decisions.
+# Context is important.
+
+# 6-43
+h <- hist(x,breaks=8); plot(h) # not exactly 8
+h
+hist(x,breaks=16)
+
+# Yes similar
+
+# 6-33
+# Note it is Ex not EX, they are not consistent.
+x <- na.omit(ch06$Ex.6.33); 
+stem(x)
+summary(x)
+mean(x)
+sd(x)
+quantile(x,seq(0,1,0.1))
+# 276.27
+
+# 6-49
+hist(x)
+```
+
+### Section 6-4
+
+```{r}
+# 6-53
+# Back to EX...
+x <- na.omit(ch06$EX.6.53); 
+xb <- mean(x) ; xb
+s <- sd(x); s
+s2 <- var(x) ; s2
+boxplot(x)
+
+# 6-71
+# names(ch06)
+# A data frame allows you to put data on a single "tab" in spreadsheet ling
+d <- data.frame(year=na.omit(ch06$EX.6.71.year),num=na.omit(ch06$EX.6.71.No.of))
+n <- nrow(d) ; n
+d$year
+d$num
+
+# and things get nicer to plot.
+plot(num~year,d,type='b')
+# Reproduce Figure 6-18 to check the solution (look at the notes for plotting table 6-2)
+```

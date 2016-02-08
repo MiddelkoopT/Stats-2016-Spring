@@ -24,6 +24,7 @@ x <- na.omit(ch06$Table6.2) ; x
 # always look at the data.
 plot(x)
 mean(x) ; sd(x)
+n <- length(x) ; n
 ```
 
 ### Stem-And-Leaf (6-2)
@@ -47,19 +48,33 @@ bins <- seq(70,250,20) ; bins
 hist(x,breaks=bins)
 
 # Yes, that's it.  We can do more with it
-h <- hist(x,breaks=bins) ; plot(h)
+h <- hist(x,breaks=bins) # ; plot(h)
 names(h)
 h$counts
 h$density
 
+# Not quite, some of the counts are wrong
+h <- hist(x,breaks=bins,right=FALSE)
+h$counts
+h$density
+
+# Density is not Realitive Frequency
+# Find the size of the last bin.
 x[x>=230]
 length(x)
 
 # I know, not typing numbers but.
+# Realative Frequency
+(2/80)
+# Density
 (2/80)/20
 
+# Compute it all (Realative Frequency).
+h$counts/n
+cumsum(h$counts)/n
+
 # The twenty comes from the witdth, 
-h$counts/length(x)/20
+h$counts/n/20
 h$density
 
 # looks the same.  Subtract to be sure
