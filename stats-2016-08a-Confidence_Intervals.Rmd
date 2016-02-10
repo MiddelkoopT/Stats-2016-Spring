@@ -1,0 +1,222 @@
+# Engineering Statistics
+Engineering Statistics (IMSE 4410) Spring 2016. 
+Copyright 2013-2016 by Timothy Middelkoop License CC by SA 3.0
+
+## Confidence Intervals - Chapter 8
+
+### Statistical Intervals for a Single Sample
+
+By looking at point estimators this way we really see that the 
+mean ($\bar x$) of a sample is just a "guess" at the population mean ($\mu$).
+So how confident that $\bar x$ is $\mu$?
+
+A confidence interval will say that the answer is correct a certain percent
+of a time.  For example, a 95% confidence interval indicates that the mean 
+will be correctly predicted by this interval 95% of the time.
+
+How do we formulate it?  Simple, for some statistic $\theta$ it is 
+$P(L \le \theta \le U) = 1 - \alpha$, where $\alpha$ is the confidence level.
+Once we find values it becomes $l \le \theta \le u$, which is the confidence interval.
+
+The properties of the sample, drawn from some known population, are used
+to determine the properties of the U and L random variables.
+From this we derive the confidence interval.
+
+In general it is derived by taking point estimators or values and placing them
+in the the formula, for example the standard norm $P(z- \le Z \le z+)$ and rearranging it so
+that only the statistic under consideration is left in the center, $P(L \le \mu \le U)$.
+
+It is easy to see where it came from, but no so easy to derive them.
+
+**For the norm, mean unknown, and known standard deviation**
+
+$$P( -z_{\alpha/2} \le { \bar X - \mu \over \sigma/{\sqrt n} } \le +z_{\alpha/2})$$
+which is converted to
+$$P(\bar x-z_{\alpha/2} \cdot \sigma/{\sqrt n} \le \mu \le \bar x + z_{\alpha/2} \cdot  \sigma/{\sqrt n})$$
+Where $z_\alpha$ is the upper tail of the normal distribution
+
+Note the definition of $z_\alpha$ (sign and in terms of $\alpha$)
+
+```{r}
+## Example 8.1 in the text.
+x <- c(64.1,64.7,64.5,64.6,64.5,64.3,64.6,64.8,64.2,64.3) # mean(x) ; length(x)
+alpha <- (1-0.95); n <- 10 ; sigma <- 1 ; xb <- 64.46
+
+# this is not an opportunity for you to copy at home.
+# write this out on paper and type it on your own.
+# this type of formula will be on the exam.
+l <- xb - qnorm(alpha/2,lower.tail=FALSE)*sigma/sqrt(n) ; l
+u <- xb + qnorm(alpha/2,lower.tail=FALSE)*sigma/sqrt(n) ; u
+
+# It is important to do this, by hand also for the exam.
+
+# note the similarities, the common part is the margin of error (me)
+# refactor them out to reduce the chance of error.
+me <- qnorm(alpha/2,lower.tail=FALSE)*sigma/sqrt(n)
+xb-me
+xb+me
+```
+
+### Example 8.4 
+
+Now that we understand what a confidence interval is and how to construct it we can go exploring.
+
+```{r}
+# Load chapter data.
+ch08 <- read.csv("data/5e/ch08.csv",header=TRUE)
+#names(ch08)
+
+# Example 8.4 Mercury Contamination.
+# we will use the na.omit function and data.frames for all sample data.
+d <- na.omit(data.frame(concentration=ch08$Example8.4))
+n <- nrow(d) ; n ## [1] 53
+xb <- mean(d$c) ; xb ## [1] 0.5249811
+s <- sd(d$c) ; s ## [1] 0.3486253
+
+# Note the difference between Q1 and Q3... (hint: what distribution should this be?)
+summary(d)
+hist(d$c)
+# This is how the text does it
+hist(d$c,breaks=seq(0,1.6,0.1)-0.05,right=FALSE)
+
+```
+
+**Confidence interval on mean with unknown standard deviation and large n**
+
+* Random variable: $Z= {\bar X-\mu \over S/{\sqrt n} }$
+* Distribution: approximately the standard norm
+* Tails: $\alpha/2$ is the upper tail
+* Margin of  error:
+
+```{r eval=FALSE}
+me <- qnorm(alpha/2,lower.tail=FALSE)*s/sqrt(n)
+xb - me ; xb + me
+```
+
+```{r}
+alpha <- 1-0.95
+me <- qnorm(alpha/2,lower.tail=FALSE)*s/sqrt(n) ; me
+xb - me 
+xb + me
+
+# Mechanically not hard, conceptually a little more so.
+# Lets look at their diagnostic, we cannot blindly apply statistics!
+# Does this look normal?
+hist(d$c)
+
+## Another way of looking at it, plot the QQ-norm graph
+qqnorm(d$c,datax=TRUE) ; qqline(d$c,datax=TRUE)
+
+## What does the dip at 0 indicate?
+
+## FYI/ the axis are the same as the text, just different scale (q v.s. %)
+pnorm(-1.5) 
+pnorm(1.0) 
+qnorm(0.05)
+qqnorm(rnorm(10000),datax=TRUE)
+```
+
+### Review of CI's
+
+**Confidence interval on the mean with known standard deviation, normal population.**
+
+* Random Variable: $Z={\bar X-\mu \over \sigma/\sqrt{n}}$
+* Distribution: standard normal distribution
+* Tails: $z_\alpha$ is the upper tail of the standard normal distribution
+* Margin of Error
+```{r eval=FALSE}
+me <- qnorm(alpha/2,lower.tail=FALSE)*sigma/sqrt(n)
+```
+* Confidence Interval
+```{r eval=FALSE}
+xb - me ; xb + me
+```
+
+**Confidence interval on the mean with unknown standard deviation and large n**
+
+* Random Variable: $Z={\bar X - \mu \over S/\sqrt{n}}$
+* Distribution: standard normal distribution
+* Tails: $z_\alpha$ is the upper tail of the standard normal distribution
+* Margin of Error
+```{r eval=FALSE}
+me <- qnorm(alpha/2,lower.tail=FALSE)*s/sqrt(n)
+```
+* Confidence Interval
+```{r eval=FALSE}
+xb - me ; xb + me
+```
+
+**Confidence interval on the mean, variance unknown (robust to non-normal populations)**
+
+* Random Variable: $T={\bar X-\mu \over S/\sqrt{n}}$
+* Distribution: t distribution with n-1 degrees of freedom
+* Tails: $\alpha/2,n-1$ upper tail of the T distribution
+* Margin of Error:
+```{r eval=FALSE}
+me <- qt(alpha/2,n-1,lower.tail=FALSE)*s/sqrt(n)
+```
+* Confidence Interval:
+```{r eval=FALSE}
+xb - me ; xb + me
+```
+
+### Example 8.5
+
+```{r}
+d <- data.frame(load=na.omit(ch08$Example8.5))
+alpha <- (1-0.95)
+n <- nrow(d) ; n ## 22
+
+xb <- mean(d$load) ; xb
+s <- sd(d$load) ; s
+
+me <- qt(alpha/2,n-1,lower.tail=FALSE)*s/sqrt(n)
+xb - me ## [1] 12.13807
+xb + me ## [1] 15.2892
+
+# does not look that good, small sample size
+hist(d$load)
+# This looks better (datax=TRUE rotates the graph to look like the text)
+qqnorm(d$load,datax=TRUE) ; qqline(d$load,datax=TRUE)
+
+## See Chapter 6-4: Box Plots (quartiles)
+#?boxplot
+boxplot(d$load)
+```
+
+**Confidence interval on the variance with unknown variance from a normal population**
+
+* Random Variable: $\chi^2={(n-1) S^2) \over \sigma^2}$ (Chi square)
+* Distribution: $\chi^2$ with $n-1$ degrees of freedom
+* Tails: $\chi^2_{\alpha/2,n-1}$ (upper) and $\chi^2_{\alpha/2,n-1}$ (lower) $\chi^2$ tails of the $\chi^2$ distribution.
+* Two sided Confidence Interval:
+```{r eval=TRUE}
+l <- (n-1)*s^2/qchisq(alpha/2,n-1,lower.tail=FALSE)
+u <- (n-1)*s^2/qchisq(alpha/2,n-1,lower.tail=TRUE)
+```
+* One sided upper Confidence Bound:
+```{r eval=TRUE}
+ouci <- (n-1)*s^2/qchisq(alpha,n-1,lower.tail=TRUE)
+```
+* One sided lower Confidence Bound:
+```{r eval=TRUE}
+olci <- (n-1)*s^2/qchisq(alpha,n-1,lower.tail=FALSE)
+```
+
+### Examples
+
+```{r}
+# Example 8-6 (8-7 6e) Detergent Filling
+alpha <- (1-0.95)
+s <- sqrt(0.0153) ; n <- 20 ## note the descrepency in the text
+ouci <- (n-1)*s^2/qchisq(alpha,n-1,lower.tail=TRUE)
+sqrt(ouci) ## [1] 0.1695104
+
+# Exercise 8-51
+alpha <- (1-0.95)
+n <- 51 ; s = 0.37
+l <- (n-1)*s^2/qchisq(alpha/2,n-1,lower.tail=FALSE)
+u <- (n-1)*s^2/qchisq(alpha/2,n-1,lower.tail=TRUE)
+sqrt(l) ## [1] 0.3095824
+sqrt(u) ## [1] 0.4599389
+```
