@@ -1,0 +1,60 @@
+# Engineering Statistics
+Engineering Statistics (IMSE 4410) Spring 2016. 
+Copyright 2013-2016 by Timothy Middelkoop License CC by SA 3.0
+
+## Confidence Intervals - Chapter 8
+
+```{r}
+## Example 8.1 in the text.
+x <- c(64.1,64.7,64.5,64.6,64.5,64.3,64.6,64.8,64.2,64.3)
+
+sum(x)
+n <- 10
+
+qnorm(0.025)
+qnorm(0.025,lower.tail=TRUE)
+
+qnorm(0.975)
+qnorm(0.025,lower.tail=FALSE)
+
+alpha <- (1-0.95) ; alpha
+# upper tail
+qnorm(1-alpha/2)
+qnorm(alpha/2,lower.tail=FALSE)
+
+## Doing it in R the long way.
+x <- c(64.1,64.7,64.5,64.6,64.5,64.3,64.6,64.8,64.2,64.3)
+
+xb <- mean(x); xb
+alpha <- 1-0.95 ; alpha
+n <- length(x) ; n
+z <- qnorm(1-alpha/2,lower.tail=TRUE) ; z
+sigma <- 1 
+
+l <- xb-z*sigma/sqrt(n) ; l
+u <- xb+z*sigma/sqrt(n) ; u
+
+# Margin of error
+me <- z*sigma/sqrt(n) ; me
+
+u <- xb + me ; u
+l <- xb - me ; l
+
+```
+
+## Example 8.4
+
+```{r}
+ch08 <- read.csv("data/5e/ch08.csv",header=TRUE) 
+#names(ch08)
+d <- na.omit(data.frame(concentration=ch08$Example8.4))
+n <- nrow(d) ; n
+length(d)
+
+xb <- mean(d$conc) ; xb
+
+hist(d$con)
+
+
+```
+
