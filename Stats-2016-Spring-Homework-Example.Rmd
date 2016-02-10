@@ -1,13 +1,10 @@
----
-title: "Homework Example"
-author: "Timothy Middelkoop"
-date: "Wednesday, February 03, 2016"
-output: html_document
----
+# Engineering Statistics Examples
+Engineering Statistics (IMSE 4410) Spring 2016. 
+Copyright 2013-2016 by Timothy Middelkoop License CC by SA 3.0
 
-## Homework Example
+## Example Homework.
 
-This is an example of how to get a random valule from the normal distribution where $\mu=4$ and $\sigma=2$
+This is an example of how to get a random value from the normal distribution where $\mu=4$ and $\sigma=2$
 
 
 ```{r}
@@ -18,12 +15,32 @@ rnorm(1,mean=4,sd=2)
 ```{r}
 ch06 <- read.csv("data/5e/ch06.csv",header=TRUE)
 nrow(ch06)
-names(ch06)
+#names(ch06)
 
+# store the data in x
 x <- na.omit(ch06$Table6.2) ; x
 
 n <- length(x) ; n
+sum(x)
 
+## Compute mean with R the long way.
+sum(x)/n
+
+## Compute mean with R using the function way
+mean(x)
+
+## Using data frames we can associate like data together
+ch11 <- read.csv("data/5e/ch11.csv",header=TRUE)
+d <- na.omit(data.frame(Level=ch11$Example11.1Level,Purity=ch11$Example11.1Purity))
+names(d)
+
+## the length of a data.frame is the number of columns, not the number of rows
+length(d)
+n <- nrow(d) ; n
+
+## Use the data frame
+length(d$Level)
+plot(Level~Purity,d)
 
 ```
 
