@@ -42,7 +42,7 @@ l <- xb - me ; l
 
 ```
 
-## Example 8.4
+### Example 8.4
 
 ```{r}
 ch08 <- read.csv("data/5e/ch08.csv",header=TRUE) 
@@ -52,9 +52,43 @@ n <- nrow(d) ; n
 length(d)
 
 xb <- mean(d$conc) ; xb
-
+plot(d$con)
 hist(d$con)
+summary(d)
+qqnorm(d$c,datax=TRUE) ; qqline(d$c,datax=TRUE)
 
+pnorm(1.0)
+pnorm(-1.5)
+
+hist(rnorm(10000))
+qqnorm(rnorm(10000),datax=TRUE)
+
+hist(runif(10000,0,10))
+qqnorm(runif(10000,0,10),datax=TRUE)
+
+## Back to the problem
+qqnorm(d$c,datax=TRUE) ; qqline(d$c,datax=TRUE)
+
+xb <- mean(d$c) ; xb
+n <- nrow(d) ; n
+s <- sd(d$c) ; s
+alpha <- 1-0.95 ; alpha
+qnorm(1-alpha/2,lower.tail=TRUE) 
+z <- qnorm(alpha/2,lower.tail=FALSE) ; z
+
+# lower and upper CI
+xb - z*s/sqrt(n) 
+xb + z*s/sqrt(n) 
+
+# ME
+me <- z*s/sqrt(n)
+l <- xb - me ; l
+u <- xb + me ; u
+
+# After class
+alpha <- 1-0.99
+z <- qnorm(alpha/2,lower.tail=FALSE) ; z
+xb - z*s/sqrt(n) 
+xb + z*s/sqrt(n) 
 
 ```
-
