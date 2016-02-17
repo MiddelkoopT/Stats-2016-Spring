@@ -215,11 +215,11 @@ olci <- (n-1)*s^2/qchisq(alpha,n-1,lower.tail=FALSE)
 ```{r}
 # Example 8-6 (8-7 6e) Detergent Filling
 alpha <- (1-0.95)
-s <- sqrt(0.0153) ; n <- 20 ## note the descrepency in the text
+s <- sqrt(0.0153) ; n <- 20
 ouci <- (n-1)*s^2/qchisq(alpha,n-1,lower.tail=TRUE)
 sqrt(ouci) ## [1] 0.1695104
 
-# Exercise 8-51
+# Exercise 8-47 (8-51 6e) Titanium Castings
 alpha <- (1-0.95)
 n <- 51 ; s = 0.37
 l <- (n-1)*s^2/qchisq(alpha/2,n-1,lower.tail=FALSE)
