@@ -92,3 +92,21 @@ xb - z*s/sqrt(n)
 xb + z*s/sqrt(n) 
 
 ```
+
+## Section 8.2/Example 8.5
+
+```{r}
+ch08 <- read.csv("data/5e/ch08.csv",header=TRUE) 
+names(ch08)
+x <- na.omit(ch08$Ex8.33) ; x 
+xb <- mean(x) ; xb
+s <- sd(x) ; s
+n <- length(x)
+sqrt(sum((x-mean(x))^2)/(n-1))
+alpha <- 1-0.95
+
+me <- qt(alpha/2,n-1,lower.tail=FALSE)*s/sqrt(n)
+xb - me 
+xb + me 
+
+```
