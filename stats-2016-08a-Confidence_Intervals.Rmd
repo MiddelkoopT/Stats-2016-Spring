@@ -28,7 +28,7 @@ that only the statistic under consideration is left in the center, $P(L \le \mu 
 
 It is easy to see where it came from, but no so easy to derive them.
 
-**For a normal population, mean unknown, and known standard deviation**
+**For the norm, mean unknown, and known standard deviation**
 
 $$P( -z_{\alpha/2} \le { \bar X - \mu \over \sigma/{\sqrt n} } \le +z_{\alpha/2})$$
 which is converted to
@@ -57,21 +57,7 @@ xb-me
 xb+me
 ```
 
-**Confidence interval on mean with unknown standard deviation and large n**
-
-* Random variable: $Z= {\bar X-\mu \over S/{\sqrt n} }$
-* Distribution: approximately the standard norm
-* Tails: $\alpha/2$ is the upper tail
-* Confidence interval: $\bar x - z_{\alpha/2} {s \over \sqrt{n}} \le \mu \le \bar x + z_{\alpha/2} {s \over \sqrt{n}}$
-* Margin of  error:
-
-```{r eval=FALSE}
-me <- qnorm(alpha/2,lower.tail=FALSE)*s/sqrt(n)
-xb - me ; xb + me
-```
-
-
-#### Example 8.4 
+### Example 8.4 
 
 Now that we understand what a confidence interval is and how to construct it we can go exploring.
 
@@ -93,7 +79,21 @@ hist(d$c)
 # This is how the text does it
 hist(d$c,breaks=seq(0,1.6,0.1)-0.05,right=FALSE)
 
-# Compute the CI
+```
+
+**Confidence interval on mean with unknown standard deviation and large n**
+
+* Random variable: $Z= {\bar X-\mu \over S/{\sqrt n} }$
+* Distribution: approximately the standard norm
+* Tails: $\alpha/2$ is the upper tail
+* Margin of  error:
+
+```{r eval=FALSE}
+me <- qnorm(alpha/2,lower.tail=FALSE)*s/sqrt(n)
+xb - me ; xb + me
+```
+
+```{r}
 alpha <- 1-0.95
 me <- qnorm(alpha/2,lower.tail=FALSE)*s/sqrt(n) ; me
 xb - me 
@@ -116,14 +116,13 @@ qnorm(0.05)
 qqnorm(rnorm(10000),datax=TRUE)
 ```
 
-#### Review of CI's
+### Review of CI's
 
 **Confidence interval on the mean with known standard deviation, normal population.**
 
 * Random Variable: $Z={\bar X-\mu \over \sigma/\sqrt{n}}$
 * Distribution: standard normal distribution
 * Tails: $z_\alpha$ is the upper tail of the standard normal distribution
-* Confidence Interval: $\bar x-z_{\alpha/2} \cdot \sigma/{\sqrt n} \le \mu \le \bar x + z_{\alpha/2} \cdot  \sigma/{\sqrt n}$
 * Margin of Error
 ```{r eval=FALSE}
 me <- qnorm(alpha/2,lower.tail=FALSE)*sigma/sqrt(n)
@@ -138,7 +137,6 @@ xb - me ; xb + me
 * Random Variable: $Z={\bar X - \mu \over S/\sqrt{n}}$
 * Distribution: standard normal distribution
 * Tails: $z_\alpha$ is the upper tail of the standard normal distribution
-* Confidence Interval: $\bar x - z_{\alpha/2} {s \over \sqrt{n}} \le \mu \le \bar x + z_{\alpha/2} {s \over \sqrt{n}}$
 * Margin of Error
 ```{r eval=FALSE}
 me <- qnorm(alpha/2,lower.tail=FALSE)*s/sqrt(n)
@@ -153,6 +151,9 @@ xb - me ; xb + me
 * Random Variable: $T={\bar X-\mu \over S/\sqrt{n}}$
 * Distribution: t distribution with n-1 degrees of freedom
 * Tails: $\alpha/2,n-1$ upper tail of the T distribution
+* Confidence Interval: 
+  $$\bar x - t_{\alpha/2,n-1}s/\sqrt{n} \le \mu \le 
+    \bar x + t_{\alpha/2,n-1}s/\sqrt{n}$$
 * Margin of Error:
 ```{r eval=FALSE}
 me <- qt(alpha/2,n-1,lower.tail=FALSE)*s/sqrt(n)
@@ -162,7 +163,7 @@ me <- qt(alpha/2,n-1,lower.tail=FALSE)*s/sqrt(n)
 xb - me ; xb + me
 ```
 
-#### Example 8.5
+### Example 8.5
 
 ```{r}
 d <- data.frame(load=na.omit(ch08$Example8.5))
@@ -188,26 +189,28 @@ boxplot(d$load)
 
 **Confidence interval on the variance with unknown variance from a normal population**
 
-* Random Variable: $\chi^2={(n-1) S^2) \over \sigma^2}$ (Chi square)
+* Random Variable: $\chi^2={(n-1) S^2 \over \sigma^2}$ (Chi square)
 * Distribution: $\chi^2$ with $n-1$ degrees of freedom
-* Tails: $\chi^2_{\alpha/2,n-1}$ (upper) and $\chi^2_{\alpha/2,n-1}$ (lower) $\chi^2$ tails of the $\chi^2$ distribution.
-* Confidence Interval: 
-  $${(n-1)s^2 \over \chi^2_{\alpha/2,n-1} } \le \sigma^2 \le {(n-1)s^2 \over \chi^2_{1-\alpha/2,n-1} }$$
+* Tails: $\chi^2_{\alpha/2,n-1}$ (upper) and $\chi^2_{1-\alpha/2,n-1}$ (lower) $\chi^2$ tails of the $\chi^2$ distribution.
 * Two sided Confidence Interval:
+  $${(n-1) s^2 \over \chi^2_{\alpha/2,n-1} } \le \sigma^2 \le
+    {(n-1) s^2 \over \chi^2_{1-\alpha/2,n-1}}$$
 ```{r eval=TRUE}
 l <- (n-1)*s^2/qchisq(alpha/2,n-1,lower.tail=FALSE)
 u <- (n-1)*s^2/qchisq(alpha/2,n-1,lower.tail=TRUE)
 ```
 * One sided upper Confidence Bound:
+  $$ \sigma^2 \le {(n-1) s^2 \over \chi^2_{1-\alpha,n-1}}$$
 ```{r eval=TRUE}
 ouci <- (n-1)*s^2/qchisq(alpha,n-1,lower.tail=TRUE)
 ```
 * One sided lower Confidence Bound:
+  $${(n-1) s^2 \over \chi^2_{\alpha,n-1} } \le \sigma^2 $$
 ```{r eval=TRUE}
 olci <- (n-1)*s^2/qchisq(alpha,n-1,lower.tail=FALSE)
 ```
 
-#### Examples
+### Examples
 
 ```{r}
 # Example 8-6 (8-7 6e) Detergent Filling
