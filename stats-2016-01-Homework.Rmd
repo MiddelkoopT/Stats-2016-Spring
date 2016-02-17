@@ -2,7 +2,7 @@
 Engineering Statistics (IMSE 4410) Spring 2016. 
 Copyright 2013-2016 by Timothy Middelkoop License CC by SA 3.0
 
-## Homework 01
+## Homework Chapter 1-7
 
 Chapter 6 (5e):
 

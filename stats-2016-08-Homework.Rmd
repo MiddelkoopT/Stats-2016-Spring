@@ -1,0 +1,128 @@
+# Engineering Statistics 
+Engineering Statistics (IMSE 4410) Spring 2016. 
+Copyright 2013-2016 by Timothy Middelkoop License CC by SA 3.0
+
+## Homework Chapter 8
+Chapter 8 (5e): 
+
+1. Example 8-4: Mercury Contamination.
+2. Exercise 8-3, 8-5, 8-9, 8-11, 8-13, 8-15
+3. Exercise 8-23, 8-22 from the tables and the functions.
+4. Exercise 8-29, 8-33, 8-41
+5. Exercise 8-43 from the tables and the functions.
+6. Exercise 8-47, 8-49, 8-51 
+
+## Homework H03 Solutions
+```{r}
+# Read in data
+ch08 <- read.csv("data/5e/ch08.csv",header=TRUE) ; nrow(ch08)
+
+# 8-3
+qnorm(0.90)
+
+# 8-11
+d <- na.omit(ch08$Ex8.11) 
+n <- length(d) ; n
+xb <- mean(d) ; xb
+sigma <- 3
+alpha <- (1-0.95)
+me <- qnorm(alpha/2,lower.tail=FALSE)*sigma/sqrt(n)
+xb - me
+xb + me
+
+# 8-23 (8-25 6e) a two sided t
+# a) 95% dof=12; from table: 2.179 
+qt((1-0.95)/2,12,lower.tail=FALSE)
+
+# 8-24 (8-26 6e) one sided t 
+# a) 95% dof=14; from table: 1.761
+qt((1-0.95),14,lower.tail=FALSE)
+
+# b) 2.539
+# c) 3.467
+
+# 8-29 (8-31 6e): postmix beverage machine
+n <- 25; xb <- 1.1 ; s <- 0.015 # sd
+alpha <- (1-0.95)
+me <- qt(alpha/2,n-1,lower.tail=FALSE)*s/sqrt(n)
+xb - me
+xb + me
+
+# 8-33 (8-35 6th): Bureau of Meteorology rainfall [443,582]
+d <- na.omit(data.frame(rain=ch08$Ex8.33))
+d$rain
+n <- nrow(d) ; n
+s <- sd(d$rain) ; s
+xb <- mean(d$rain) ; xb
+alpha <- (1-0.95)
+me <- qt(alpha/2,n-1,lower.tail=FALSE)*s/sqrt(n)
+xb - me
+xb + me
+
+hist(d$rain)
+qqnorm(d$rain,datax=TRUE) ; qqline(d$rain,datax=TRUE)
+# yes appear normal
+
+# 8-41 (8-43 6th): Nuculear Engineering
+d <- na.omit(data.frame(enrichment=ch08$Ex8.41))
+d$enrichment
+n <- nrow(d) ; n
+s <- sd(d$enrichment) ; s
+xb <- mean(d$enrichment) ; xb
+alpha <- (1-0.95)
+me <- qt(alpha/2,n-1,lower.tail=FALSE)*s/sqrt(n)
+xb - me
+xb + me
+
+hist(d$enrichment)
+qqnorm(d$enrichment,datax=TRUE) ; qqline(d$enrichment,datax=TRUE)
+# yes appear normal
+
+# 8-43 (8-47 6th): CI's
+# a) 95%, dof=24, one sided(upper) [this is the lower tail]
+qchisq((1-0.95),24,lower.tail=TRUE)
+# [1] 13.84843
+
+# c) 90%, dof=19, two sided
+qchisq((1-0.90)/2,19,lower.tail=TRUE) # lower tail
+qchisq((1-0.90)/2,19,lower.tail=FALSE) # upper tail
+
+# 8-47 (8-51 6th): titanium castings [0.31, 0.46]
+n <- 51 ; s<-0.37
+alhpa <- (1-0.95)
+l <- (n-1)*s^2/qchisq(alpha/2,n-1,lower.tail=FALSE)
+u <- (n-1)*s^2/qchisq(alpha/2,n-1,lower.tail=TRUE)
+sqrt(l)
+sqrt(u)
+
+# 8-49 (5-53 6th): Urban Ecosystems
+d <- na.omit(data.frame(temp=ch08$Ex8.49.1))
+d$temp
+n <- nrow(d) ; n
+s <- sd(d$temp) ; s
+xb <- mean(d$temp) ; xb
+alpha <- (1-0.95)
+l <- (n-1)*s^2/qchisq(alpha/2,n-1,lower.tail=FALSE)
+u <- (n-1)*s^2/qchisq(alpha/2,n-1,lower.tail=TRUE)
+sqrt(l)
+sqrt(u)
+
+hist(d$temp)
+qqnorm(d$temp,datax=TRUE) ; qqline(d$temp,datax=TRUE)
+# yes appear normal
+
+
+# 8-51 (5-53 6th): Technometrics
+d <- na.omit(data.frame(weight=ch08$Ex8.51))
+d$weight
+n <- nrow(d) ; n
+s <- sd(d$weight) ; s
+xb <- mean(d$weight) ; xb
+alpha <- (1-0.95)
+u <- (n-1)*s^2/qchisq(alpha,n-1,lower.tail=TRUE)
+sqrt(u)
+
+hist(d$weight)
+qqnorm(d$weight,datax=TRUE) ; qqline(d$weigh,datax=TRUE)
+# does not appear normal
+```
