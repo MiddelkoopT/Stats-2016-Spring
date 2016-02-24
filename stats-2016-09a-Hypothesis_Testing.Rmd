@@ -1,0 +1,135 @@
+# Engineering Statistics
+IMSE 4410 Spring 2016. Copyright 2013-2016 by Timothy Middelkoop License CC by SA 3.0
+
+## Hypothesis Testing - Chapter 9
+
+"You can't prove anything, you can only disprove it" H0
+
+### Type I Error
+
+* Type I error:  Reject H0 when H0 is true.
+* P(Type I error):  $\alpha$ (alpha) error or significance level.
+
+```{r}
+# Example 9-1.2
+n <- 10
+sigma <- 2.5
+mu <- 50
+sigmaxb <- sigma/sqrt(n) ; sigmaxb ## [1] 0.7905694
+```
+
+$\sigma_{\bar x}$ (sigmaxb) is the standard deviation of the sample mean $\bar x$ (xb)
+
+```{r}
+# find the alpha error
+alpha <- pnorm(48.5,mean=mu,sd=sigmaxb,lower.tail=TRUE) +
+         pnorm(51.5,mean=mu,sd=sigmaxb,lower.tail=FALSE) ; alpha ## [1] 0.05777957
+```
+
+This means alpha (5.7%) of all random samples would lead to the rejection of the null hypothesis H0:mu==50.
+
+### Type II Error
+
+* Type II error: Fail to reject H0 when H0 is false.
+* P(Type II error): $\beta$ (beta) error
+* 1-$\beta$: power of a test.
+* When we fail to reject H0 it does not mean H0 is true (it is just not, not true)
+
+Note, since H0 is false we need to know what H0 actually is. We say "under H1" what it actually is.
+
+**under H0: $\mu=50$, under H1: $\mu=52$ (which says $\mu$ not 50 but 52)**
+
+```{r}
+pnorm(51.5,mean=52,sd=sigmaxb,lower.tail=TRUE) ## [1] 0.2635446
+pnorm(48.5,mean=52,sd=sigmaxb,lower.tail=TRUE) ## [1] 4.77346e-06
+
+beta <- pnorm(51.5,mean=52,sd=sigmaxb,lower.tail=TRUE) - 
+  	pnorm(48.5,mean=52,sd=sigmaxb,lower.tail=TRUE) ; beta ## [1] 0.2635399
+
+# Do not like the probability? Increase n 
+n <- 16
+sigmaxb <- sigma/sqrt(n) ; sigmaxb
+
+# Remember sigmaxb is the standard deviation on the sample mean, not the population!
+pnorm(51.5,mean=52,sd=sigmaxb,lower.tail=TRUE) ## [1] 0.2118554 # better
+
+alpha <- pnorm(48.5,mean=mu,sd=sigmaxb,lower.tail=TRUE) +
+		pnorm(51.5,mean=mu,sd=sigmaxb,lower.tail=FALSE) ; alpha ## [1] 0.01639507
+
+# but look what happened to our alpha value.
+```
+
+### The relationship between Type I and Type II
+
+Type I and Type II errors are related, reduce one, increase the other.
+The size of the critical region determines alpha.
+An increase in $n$, with $\alpha$ (alpha) constant, decreases $\beta$ (beta).
+When H0 is false and the true value approaches H0, beta increases.
+
+* We control alpha.
+* Rejecting H0 is a strong conclusion.
+* We typically want to reject H0 leaving us with H1 being true.
+
+* One sided tests, the direction matters.
+* What do we want "strong evidence" of?  Rejecting H0 will indicate strong evidence.
+* For the bursting strength example, H0=200, H1>200 (Eq 9-5) indicates strong evidence that the bottles meet the specifications.
+
+### p-values
+
+Don't report just rejection ($p<\alpha$), report how strong is the rejection (the p-value)
+
+**How much alpha would it take (the p-value) to reject H0.**
+
+```{r}
+# 9-1.4
+# H0: mu=50; H1: mu!=50
+mu <- 50 ; n <- 16 ; sigma <- 2.5
+xb <- 51.3
+sigmaxb <- sigma/sqrt(n) ; sigmaxb ## [1] 0.625
+
+# find the symmetric limit (sxb)
+sxb <- mu - (xb-mu) ; sxb ## [1] 48.7
+
+# Add the tails to find the p-value (p)
+p <- pnorm(xb,mean=mu,sd=sigmaxb,lower.tail=FALSE) +
+   pnorm(sxb,mean=mu,sd=sigmaxb,lower.tail=TRUE) ; p ## [1] 0.03752553
+```
+
+So p-value < 0.05 so we reject H0, the p-value is the observed significance level.
+Any p-value > 0.0375 would lead to rejecting H0.  _Think about it._
+
+The hypothesis test is either True or False, we are just stating the significance level.
+
+**Review: "Acceptance Region" table on page 291 (9-1.2)**
+
+```{r}
+# 48.5 < xb < 51.5, n=10
+sigma <- 2.5; mu0 <- 50 
+
+# alpha
+n <- 10
+sigmaxb <- sigma/sqrt(n)
+pnorm(48.5,mean=mu0,sd=sigmaxb,lower.tail=TRUE) +
+pnorm(51.5,mean=mu0,sd=sigmaxb,lower.tail=FALSE)   ## [1] 0.05777957
+
+mu1 <- 52
+pnorm(51.5,mean=mu1,sd=sigmaxb,lower.tail=TRUE) -
+pnorm(48.5,mean=mu1,sd=sigmaxb,lower.tail=TRUE)   ## [1] 0.2635399
+
+mu1 <- 50.5
+pnorm(51.5,mean=mu1,sd=sigmaxb,lower.tail=TRUE) -
+pnorm(48.5,mean=mu1,sd=sigmaxb,lower.tail=TRUE)   ## [1] 0.8913424
+
+# Rest are easy, lets try n=16, H1:m=52
+mu1 <- 52
+n <- 16
+sigmaxb <- sigma/sqrt(n)
+pnorm(51.58,mean=mu1,sd=sigmaxb,lower.tail=TRUE) -
+pnorm(48.42,mean=mu1,sd=sigmaxb,lower.tail=TRUE)   ## [1] 0.2507918
+```
+
+
+### References
+
+* "Computing the Standard Deviation of Sample Means," https://www.utdallas.edu/~metin/Ba3352/qch9-10.pdf
+

@@ -1,0 +1,171 @@
+# Engineering Statistics
+IMSE 4410 Spring 2016. Copyright 2013-2016 by Timothy Middelkoop License CC by SA 3.0
+
+## Hypothesis Testing Part II (Chapter 9, Week 7)
+
+HO: "You can't prove anything, you can only disprove it"
+
+Procedure (Section 9-1.6):
+
+1. Identify parameter of interest.
+2. Formulate H0
+3. Formulate H1
+4. Determine test statistic.
+5. State H0 rejection criteria.
+6. Calculate
+7. Reject H0 or fail to reject H0.
+8. Conclusions
+
+### Tests on the mean of a normal distribution, variance known.
+
+Steps 1-5
+
+* Tests on the mean of a normal distribution, variance known.
+* Test: H0: $\mu=\mu_0$; H1: $\mu\ne\mu_0$
+* Distribution: Xbar is the standard normal with standard deviation sigma/sqrt(n)
+* Test Statistic: $Z={\bar X - \mu_0 \over \sigma/\sqrt{n} }$
+* Two sided p-value:
+```{r eval=FALSE}
+pv <- 2*pnorm((xb-mu0)/(sigma/sqrt(n)),lower.tail=FALSE) ; pv
+```
+* Reject H0: p-value > $\alpha$.
+
+```{r}
+# Example 9.2 (6e): Propellant burning calculations (Step 6)
+alpha <- 0.05
+sigma <- 2
+xb <- 51.3
+n <- 25
+mu0 <- 50
+pv <- 2*pnorm((xb-mu0)/(sigma/sqrt(n)),lower.tail=FALSE) ; pv ## [1] 0.00115405
+
+# p < 0.05 so we reject H0 (Step 7)
+# The mean burning rate is different from 50 cm/s (Step 8)
+```
+
+
+What is the significance of the test? $\alpha=0.05$
+
+* What is P(Type II error)?
+* Accept H0, H0 is false
+* If you have to figure this out, use the non-standard normal functions. Otherwise just use the formula.
+
+```{r}
+## Example 9-3 (6e): Type II errors.
+alpha <- 0.05
+mu0 <- 50.0
+mu1 <- 49.0
+sigma <- 2
+n <- 25
+
+## Type II error for above hypothesis test.
+beta <- pnorm(qnorm(alpha/2,lower.tail=FALSE)-((mu0-mu1)*sqrt(n))/sigma) -
+  	pnorm(qnorm(alpha/2,lower.tail=TRUE)-((mu0-mu1)*sqrt(n))/sigma) ; beta
+# [1] 0.294582
+
+## This is an example were you should think about where this came from!
+## Be prepared to demonstrate this on an exam.
+
+## Find the acceptance region using the non-standard normal for H0:mu0
+crl <- qnorm(alpha/2,mean=mu0,sd=sigma/sqrt(n),lower.tail=TRUE) ; crl
+cru <- qnorm(alpha/2,mean=mu0,sd=sigma/sqrt(n),lower.tail=FALSE) ; cru
+# [1] 49.21601
+# [1] 50.78399
+
+## Now apply this to the shifted H1:mu1
+beta <- pnorm(cru,mean=mu1,sd=sigma/sqrt(n),lower.tail=TRUE) - pnorm(crl,mean=mu1,sd=sigma/sqrt(n),lower.tail=TRUE) ; beta ## [1] 0.294582
+
+## Did that make more sense?
+
+## For good measure lets do this for the p-values as well.
+2*pnorm(xb,mean=mu0,sd=sigma/sqrt(n),lower.tail=FALSE)
+
+## Sample size given beta.
+
+## In the case we would like a power of 0.90 (beta=0.10), what would be n
+## From the text
+beta <- (1-0.90)
+n <- (qnorm(alpha/2,lower.tail=FALSE) + qnorm(beta,lower.tail=FALSE))^2*sigma^2/((mu0-mu1))^2 ; n
+
+## For the computational people.
+## Just numerically solve for n on the interval c(1,100)
+beta <- (1-0.90)
+## uniroot finds a root (a zero) of a function
+uniroot(function(n) {
+		-beta +
+        pnorm(qnorm(alpha/2,lower.tail=FALSE)-((mu0-mu1)*sqrt(n))/sigma) -
+		pnorm(qnorm(alpha/2,lower.tail=TRUE)-((mu0-mu1)*sqrt(n))/sigma)
+},c(1,100))$root
+
+## Using OC Curves. Don't. Use a computer.
+```
+
+
+### Tests on the mean of a normal distribution, variance unknown (9-3)
+
+* Tests on the mean of a normal distribution, variance unknown.
+* Test: H0:$\mu=\mu_0$; H1:$mu\ne\mu_0$
+* Distribution: $t$ distribution with $n-1$ degrees of freedom.
+* Test statistic: $T0= { \bar X - \mu_0 \over S/\sqrt{n} }$
+* Two sided p-value: (we can do this since the t-dist is symmetric)
+```{r eval=FALSE}
+pv <- 2*pt(abs(xb-mu0)/(s/sqrt(n)),n-1,lower.tail=FALSE) ; pv 
+```
+* One sided p-vale, H1:$\mu>\mu_0$, upper tailed test, critical region on right
+```{r eval=FALSE}
+pv <- pt((xb-mu0)/(s/sqrt(n)),n-1,lower.tail=FALSE) ; pv
+```
+* One sided p-vale, H1:$\mu<\mu_0$, lower tailed test, critical region on left
+```{r eval=FALSE}
+pv <- pt((xb-mu0)/(s/sqrt(n)),n-1,lower.tail=TRUE) ; pv
+```
+
+Example:
+```{r}
+## Example 9-6: Golf club
+ch09 <- read.csv("data/5e/ch09.csv",header=TRUE)
+d <- na.omit(ch09$Example9.6) ; n <- length(d) ; n ## [1] 15
+xb <- mean(d); xb ## [1] 0.83724
+s <- sd(d); s ## [1] 0.0245571
+
+## Data matches the text.
+qqnorm(d,datax=TRUE); qqline(d,datax=TRUE)
+
+## Does the mean exceed 0.82 with a significance level of 0.05 
+## H0: mu==0.82; H1: mu > 0.82; upper tailed test
+alpha <- 0.05
+mu0 <- 0.82
+pv <- pt((xb-mu0)/(s/sqrt(n)),n-1,lower.tail=FALSE) ; pv ## [1] 0.008313369
+
+## FYI/ the t0-value
+(xb-mu0)/(s/sqrt(n)) ## [1] 2.718979
+
+## p < 0.05 so we reject H0, mu > 0.82
+
+## R direct analysis
+t.test(d, mu=0.82, alternative="greater")
+```
+
+
+Type II error.
+Messy, so we use R.
+
+```{r}
+## Example 9-7 (6e)
+n <- 15 ; alpha <- 0.05
+power <- 0.80 ; delta <- 0.02
+## How many samples would be needed to have a power of 0.80 for a delta of 0.02
+power.t.test(n=NULL,power=power,sd=s,delta=0.02,sig.level=alpha, type="one.sample", alternative="one.sided")
+
+## Only 10, so 15 is sufficient.
+
+## What is the power of a test a n=15?
+power.t.test(n=n,power=NULL,sd=s,delta=0.02,sig.level=alpha, type="one.sample", alternative="one.sided")
+
+## The power is 0.91
+```
+
+The "one.sample" indicates that we are taking a single sample from
+the population and trying to determine if it is from that population.
+It is the name of this hypothesis test.
+
