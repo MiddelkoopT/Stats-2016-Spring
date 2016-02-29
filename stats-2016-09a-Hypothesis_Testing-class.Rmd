@@ -1,0 +1,19 @@
+# Engineering Statistics
+IMSE 4410 Spring 2016. Copyright 2013-2016 by Timothy Middelkoop License CC by SA 3.0
+
+## Hypothesis Testing - Chapter 9
+
+### In class work
+
+```{r}
+pnorm(-0.63,lower.tail=TRUE)
+pnorm(0.63,lower.tail=FALSE)
+
+## on board example
+alpha <- 0.05
+qnorm(alpha/2,lower.tail=FALSE)
+
+qnorm(alpha/2,mean=50,sd=2.5/sqrt(10),lower.tail=FALSE)
+qnorm(alpha/2,mean=50,sd=2.5/sqrt(10),lower.tail=TRUE)
+
+```
