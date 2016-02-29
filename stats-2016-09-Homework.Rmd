@@ -1,0 +1,205 @@
+# Engineering Statistics 
+Engineering Statistics (IMSE 4410) Spring 2015-17. Copyright 2013-2015 by Timothy Middelkoop License CC by SA 3.0
+
+## Homework Chapter 9
+
+Chapter 9 (5e):
+
+1. Exercises from 9-1: 9-1, 9-5, 9-7, 9-9, 9-15, 9-17, 9-19
+2. Exercises from 9-2: 9-29, 9-33, 9-35, 9-43(a-d)
+3. Exercises from 9-3: 9-48, 9-51, 9-53, 9-57(a-b), 9-59(a-d)
+
+Graduate/Extra:
+
+4. Exercises from 9-4: 9-71, 9-74, 9-75, 9-79
+```{r}
+ch09 <- read.csv("data/5e/ch09.csv",header=TRUE) ; nrow(ch09)
+
+
+#### Section 9-1
+
+## 9-5: textile fiber, one sided H0:mu==12, H1:mu<12
+## a)
+mu0 <- 12 ; sigma <- 0.5 ; n <- 4
+crl <- 11.5
+alpha <- pnorm((crl-mu0)/(sigma/sqrt(n)),lower.tail=TRUE) ; alpha
+alpha <- pnorm(crl,mean=mu0,sd=sigma/sqrt(n),lower.tail=TRUE) ; alpha # [1] 0.02275013
+
+## b)
+mu1 <- 11.25
+beta <- pnorm(crl,mean=mu1,sd=sigma/sqrt(n),lower.tail=FALSE) ; beta ## ignore minimal tail # [1] 0.1586553
+
+## c)
+mu1 <- 11.50
+beta <- pnorm(crl,mean=mu1,sd=sigma/sqrt(n),lower.tail=FALSE) ; beta ## ignore minimal tail # [1] 0.5
+
+## 9-7: boundaries of 9-5
+## xb < crl
+alpha <- 0.01 ; n <- 4
+crl <- qnorm(alpha,mean=mu0,sd=sigma/sqrt(n),lower.tail=TRUE) ; crl # [1] 11.41841
+
+alpha <- 0.05 ; n <- 16
+crl <- qnorm(alpha,mean=mu0,sd=sigma/sqrt(n),lower.tail=TRUE) ; crl # [1] 11.79439
+
+## note quite, find the z value, double check standard norm inverse.
+pnorm((crl-mu0)/(sigma/sqrt(n)),lower.tail=TRUE) # [1] 0.05
+
+(crl-mu0)/(sigma/sqrt(n)) # [1] -1.644854
+
+## Close, the error is due to the table.
+
+## 9-9: p-value of 9-5
+## a) (text answer has a typo)
+xb <- 11.25
+pnorm(xb,mean=mu0,sd=sigma/sqrt(n),lower.tail=TRUE) # [1] 0.001349898
+
+## b) 
+xb <- 11.00
+pnorm(xb,mean=mu0,sd=sigma/sqrt(n),lower.tail=TRUE) # [1] 3.167124e-05
+
+## c)
+xb <- 11.75
+pnorm(xb,mean=mu0,sd=sigma/sqrt(n),lower.tail=TRUE) # [1] 0.1586553
+
+## 9-15: Shampoo. H0:mu=mu0; H1: mu>mu0
+sigma <- 20
+mu0 <- 175
+n <- 10
+## a) p-value
+cru <- 185
+alpha <- pnorm(cru,mean=mu0,sd=sigma/sqrt(n),lower.tail=FALSE) ; alpha # [1] 0.05692315
+
+## z value
+(cru-mu0)/(sigma/sqrt(n)) # [1] 1.581139
+
+## b) beta@185
+mu1 <- 185 
+beta <- pnorm(cru,mean=mu1,sd=sigma/sqrt(n),lower.tail=TRUE) ; beta # [1] 0.5
+
+## c) beta@195
+mu1 <- 195
+beta <- pnorm(cru,mean=mu1,sd=sigma/sqrt(n),lower.tail=TRUE) ; beta # [1] 0.05692315
+
+## 9-17: critical region of 9-15
+alpha <- 0.01 ; n <- 10
+cru <- qnorm(alpha,mean=mu0,sd=sigma/sqrt(n),lower.tail=FALSE) ; cru # [1] 189.7131
+
+## 9-19: p-value of 9-15
+xb <- 180
+pv <- pnorm(xb,mean=mu0,sd=sigma/sqrt(n),lower.tail=FALSE) ; pv
+
+#### Section 9-2
+
+## 9-33: H0: mu=7, H1: mu!=7 find p-value
+mu0 <- 7
+z0 <- 2.05 ## z values are the standard norm
+
+2*pnorm(z0,lower.tail=FALSE) # [1] 0.04036443
+
+## This is a good example of a Exam question, mu0 is not used
+## 9-35: H0: mu=5 H1: mu<5, lower tail test
+pnorm(z0,lower.tail=TRUE) # [1] 0.9798178
+
+## Another example of an Exam question, we usually reject H0 with a low p-value
+
+## 9-43
+## Battery life.
+sigma <- 1.25 ; n <- 10 ; xb <- 40.5
+
+## a) life > 40hours?
+alpha <- 0.05
+
+## H0: mu=40, H1: mu>40 (upper test)
+mu0 <- 40
+pv <- pnorm(xb,mean=mu0,sd=sigma/sqrt(n),lower.tail=FALSE) ; pv # [1] 0.1029516
+## pv > alpha, fail to reject H0.  No evidence that battery life is > 40.
+
+## z0
+(xb-mu0)/(sigma/sqrt(n)) # [1] 1.264911
+
+## b)
+pv # [1] 0.1029516
+
+## c) True mean of 42
+mu1 <- 42
+cru <- qnorm(alpha,mean=mu0,sd=sigma/sqrt(n),lower.tail=FALSE) ; cru
+beta <- pnorm(cru,mean=mu1,sd=sigma/sqrt(n),lower.tail=TRUE) ; beta # [1] 0.0003191553
+
+## Section 9-3
+
+## 9-48
+qt(0.01,20,lower.tail=FALSE) # [1] 2.527977
+
+qt(0.05,12,lower.tail=FALSE) # [1] 1.782288
+
+qt(0.10,15,lower.tail=FALSE) # [1] 1.340606
+
+## 9-51 H0:mu=7, H1:mu!=7
+n <- 20
+2*pt(2.05,n-1,lower.tail=FALSE) # [1] 0.05144195
+
+2*pt(0.4,n-1,lower.tail=FALSE) # [1] 0.6926945
+
+## 9-53 H0:mu=5, H1:mu<5, lower tail test
+n <- 12
+pt(2.05,n-1,lower.tail=TRUE) # [1] 0.9675122
+
+pt(0.40,n-1,lower.tail=TRUE) # [1] 0.6515927
+
+## 9-57: Pigs
+## t-test.
+d <- na.omit(ch09$Ex9.57) ; n <- length(d) ; n
+xb <- mean(d) ; xb
+s <- sd(d) ; s
+
+## a) H0: mu=300, H1: mu!=300
+alpha <- 0.05
+mu0 <- 300
+
+## Two sided hypothesis test, p-values
+t0 <- abs(xb-mu0)/(s/sqrt(n)) ; t0 # [1] 0.6664602
+
+pv <- 2*pt(t0,n-1,lower.tail=FALSE) ; pv  # [1] 0.5109881
+
+## p-value > 0.05 so we fail to reject H0.
+## There is no evidence to conclude that the weight differs from 300kg
+
+## b)
+pv # [1] 0.5109881
+
+## 9-59: Normal Body Temperature
+## t-test
+d <- na.omit(ch09$Ex9.59) ; n <- length(d) ; n
+xb <- mean(d) ; xb
+s <- sd(d) ; s
+
+## a) H0:mu=98.6, H1:mu!=98.6
+mu0 <- 98.6
+alpha <- 0.05
+
+t0 <- abs(xb-mu0)/(s/sqrt(n)) ; t0 # [1] 3.484907
+
+pv <- 2*pt(t0,n-1,lower.tail=FALSE) ; pv# [1] 0.001912414
+
+## p-value < 0.05 so we Reject H0.
+## We can strongly say that the mean body temperature is not 98.6 with 0.05 significance.
+
+## b) normal?
+qqnorm(d,datax=TRUE); qqline(d,datax=TRUE)
+## approximately normal, but a bit skewed.
+
+## c) population is actually 98.0, calculate beta/power
+mu1 <- 98.0
+power.t.test(n=n,power=NULL,sd=s,delta=abs(mu1-mu0),sig.level=alpha, type="one.sample", alternative="one.sided")
+
+## d) number of samples if a power of 0.90 and true mean is 98.2
+mu1 <- 98.2
+power.t.test(n=NULL,power=0.90,sd=s,delta=abs(mu1-mu0),sig.level=alpha, type="one.sample", alternative="one.sided")
+````
+
+
+
+
+
+
+

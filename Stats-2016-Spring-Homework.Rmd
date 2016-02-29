@@ -20,3 +20,14 @@ Chapter 8 (5e):
 4. Exercise 8-29, 8-33, 8-41
 5. Exercise 8-43 from the tables and the functions.
 6. Exercise 8-47, 8-49, 8-51 
+
+## Homework Chapter 9
+Chapter 9 (5e):
+
+1. Exercises from 9-1: 9-1, 9-5, 9-7, 9-9, 9-15, 9-17, 9-19
+2. Exercises from 9-2: 9-29, 9-33, 9-35, 9-43(a-d)
+3. Exercises from 9-3: 9-48, 9-51, 9-53, 9-57(a-b), 9-59(a-d)
+
+Graduate/Extra:
+
+4. Exercises from 9-4: 9-71, 9-74, 9-75, 9-79

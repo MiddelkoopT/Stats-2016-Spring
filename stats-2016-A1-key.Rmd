@@ -1,0 +1,175 @@
+# Assignment A1 Solutions 
+Assignment A1 solutions for Engineering Statistics (IMSE 4410) Spring 2016.
+Copyright 2014-2016 by Timothy Middelkoop License CC by SA 3.0
+
+Points are for reference only and indicate the points that were assigned as an exam.  This assignment is graded as Pass (10), Fail (5), and No Attempt (0)
+
+## Statistics (11 points)
+
+1. What is the *population* standard deviation of $9, 4, 2, 5, 10$? (2 Points)
+
+$$\bar X={9+4+2+5+10\over5}=6$$
+$$S^2={\sum (x_i-\bar X)\over n}={(9-6)^2+(4-6)^2+(2-6)^2+(5-6)^2)+(10-6)^2 \over 5}={46\over5}=9.2$$
+$$S=\sqrt{9.2}=3.03$$
+
+```{r}
+(9+4+2+5+10)/5
+(9-6)^2 + (4-6)^2 + (2-6)^2 + (5-6)^2 + (10-6)^2
+sqrt(46/5) 
+
+## using R
+d <- c(9,4,2,5,10)
+xb <- mean(d)
+sqrt(sum((d-xb)^2)/length(d))
+
+## Note the difference with the sample sd.
+sd(d)
+```
+
+2.  From the tables find the following:
+
+a. for the standard normal what is the probability that $Z \ge 0.5$? (2 points)
+
+$$P(Z \ge 0.5)=1-P(Z \le 0.5)=1-0.6914625=0.3085375$$
+
+```{r}
+pnorm(0.5,lower.tail=FALSE)
+```
+
+b.  for the standard normal distribution, what $P(-3 \le Z \le 2)$? (2 points)
+
+$$P(-3 \le Z \le 2)=P(Z \le 2)-(1-P(Z \le 3))=0.9772499-(1-0.9986501)=0.9759$$
+
+```{r}
+pnorm(2,lower.tail=TRUE) - pnorm(-3,lower.tail=TRUE)
+```
+
+c.  what is the $Z$ value for the lower $50\%$ tail for the standard normal distribution. (1 point)
+
+$$P(Z)=0.5, Z=0$$
+
+```{r}
+qnorm(0.5,lower.tail=TRUE)
+```
+
+
+d.  what is the $Z$ value for $\alpha=0.10$ for a two sided hypothesis tests? (1 point)
+
+$$Z_{\alpha/2}=\phi(1-{\alpha/2})=\phi(0.95)=1.65$$
+
+```{r}
+qnorm(0.10/2,lower.tail=FALSE)
+```
+
+e.  For a normally distributed random variable $X$ with $\mu= 16$ and $\sigma = 9$ what is the probability that $X \le 12$? (2 points)
+
+$$P(X\le12)=P(Z\le{12-16\over9})=P(Z<-0.45)=1-P(Z<0.45)=1-0.6736=0.3265$$
+
+```{r}
+pnorm(12,mean=16, sd=9, lower.tail=TRUE)
+```
+
+
+f.  What are the parameters of the standard normal distribution. (1 point)
+
+*Normal distributions are defined by two parameters, the mean $(\mu)$ and the standard deviation $(\sigma)$.*
+
+## R (7 points)
+
+3.  How do you assign the number $3$ to the variable a. (1 point).
+
+
+```{r}
+a<-3
+a=3
+```
+
+4.  How would you produce $100$ normally distributed samples with a mean of $4$ and standard deviation of $10$? (1 point)
+
+```{r eval=FALSE}
+rnorm(100,4,10)
+```
+
+5.  Write the R function and the proper arguments to find the following:
+
+a.	For the standard normal distribution, what is the probability that $Z\le 1$. (1 point)
+
+```{r}
+pnorm(1)
+pnorm(1,lower.tail=TRUE)
+```
+
+b.  For the normal with $\mu=3$ and $\sigma=12$ find $P(4\le Z \le 10)$.  (1 point)
+
+```{r}
+pnorm(10,3,12,lower.tail=TRUE)-pnorm(4,3,12,lower.tail=TRUE)
+```
+
+c.  The z value for the upper $0.15\%$ tail for the standard normal distribution. (2 points)
+
+```{r}
+qnorm(0.15,lower.tail=FALSE)
+```
+
+d. What is t-value for the upper tail of the t distribution for an alpha of $0.05$ with $4$ degrees of freedom (find $t_{0.05,4}$). (1 point)
+
+```{r}
+qt(0.95,4)
+qt(0.05,4,lower.tail=FALSE)
+```
+
+## Confidence Intervals (6 points)
+
+6.  What distribution, and it's parameters, is used to determine the confidence interval on the variance with unknown variance from a normal population? (4 points)
+
+*Student* or *t*
+
+7.  What is the margin of error for the two sided confidence interval on the mean, variance known, small sample size (in either mathematical notation or in R notation). (2 point)
+
+$$\pm t_{\alpha/ 2} \frac{S}{\sqrt{n}}$$
+
+## Computation (26 points)
+
+8. For a two sided confidence interval for the mean of a population, standard deviation unknown, large sample size, the random variable, $(\bar X-\mu)\over{{S}/{\sqrt{n}}}$ , is approximately normal. The confidence interval can be found as follows: 
+$$\bar X-Z_{\alpha/2}\frac{S}{\sqrt{n}}\le\mu\le\bar X+Z_{\alpha/2}\frac{S}{\sqrt{n}}$$ 
+with $Z_{\alpha/2}$ being the upper tail of the standard normal distribution giving a $100(1-\alpha)\%$ confidence level.
+
+a. What R function (with proper argument values) would you use to find $Z_{\alpha/2}$?
+
+qnorm($\alpha/2$,lower.tail=FALSE)
+
+b. A large sample of $32$ is taken with a sample mean of $12$ and a sample standard deviation of $2$ from a normal population with a mean of $12.5$ and standard deviation of $1.2$, compute the $90\%$ two sided confidence interval?
+
+```{r}
+xb<-12
+s<-2
+n<-32
+me<-qnorm(0.95)*s/sqrt(n)
+left<-xb-me
+right<-xb+me
+left
+right
+```
+
+```{r}
+qnorm(0.05,mean=12,sd=2/sqrt(32),lower.tail=TRUE)
+qnorm(0.05,mean=12,sd=2/sqrt(32),lower.tail=FALSE)
+```
+
+9.  A sample of $c(3,2,5,10)$ was taken from a population that is normally distributed with a known standard deviation of $1.2$.  Compute the $90\%$ confidence interval on the mean. (18 Points)
+
+```{r}
+mean(c(3,2,5,10))
+xb<-5
+s<-1.2
+n<-4
+error<-qnorm(0.95)*s/sqrt(n)
+left<-xb-error
+right<-xb+error
+left
+right
+```
+
+
+
+
