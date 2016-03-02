@@ -17,3 +17,25 @@ qnorm(alpha/2,mean=50,sd=2.5/sqrt(10),lower.tail=FALSE)
 qnorm(alpha/2,mean=50,sd=2.5/sqrt(10),lower.tail=TRUE)
 
 ```
+
+
+## Hypothesis Testing II
+
+```{r}
+ch09 <- read.csv("data/5e/ch09.csv",header=TRUE)
+d <- na.omit(ch09$Example9.6) ; n <- length(d) ; n ## [1] 
+
+plot(d)
+qqnorm(d,datax=TRUE) ; qqline(d,datax=TRUE)
+
+alpha <- 0.05
+mu0 <- 0.82
+
+xb <- mean(d) ; xb
+s <- sd(d) ; s
+
+talpha <- qt(alpha,n-1,lower.tail=FALSE) ; talpha
+t0 <- (xb-mu0)/(s/sqrt(n)) ; t0
+
+t.test(d,mu=0.82,alternative="greater")
+```
