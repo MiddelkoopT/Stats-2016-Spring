@@ -39,3 +39,29 @@ t0 <- (xb-mu0)/(s/sqrt(n)) ; t0
 
 t.test(d,mu=0.82,alternative="greater")
 ```
+### p-value and $\beta$ values
+
+```{r}
+## By hand p-value
+n<-15
+pt(2.719,n-1,lower.tail=FALSE)
+
+## Using R
+ch09 <- read.csv("data/5e/ch09.csv",header=TRUE)
+x <- na.omit(ch09$Example9.6) ; n <- length(x) ; n ## [1] 
+
+xb <- mean(x) ; xb
+s <- sd(x) ; s
+alpha <- 0.05
+mu0 <- 0.82
+t0 <- (xb-mu0)/(s/sqrt(n)) ; t0
+pt(t0,n-1,lower.tail=FALSE)
+
+pt((xb-mu0)/(s/sqrt(n)),n-1,lower.tail=FALSE)
+
+power.t.test(n = NULL,delta = 0.02,sd = s,sig.level = alpha, type = "one.sample", alternative="one.sided", power=0.80)
+
+power.t.test(n = n, delta = 0.02, sd = s,sig.level = alpha, type = "one.sample", alternative="one.sided", power=NULL)
+
+
+```
