@@ -16,7 +16,7 @@ Understand the assumptions behind regression.  Regression only works over the ra
 
 $\epsilon$ is the error term, mean 0, unknown variance $\sigma^2$ and uncorrelated.
 
-Finding $\beta$: Least squares. (Equation 11-4 6e)
+Finding $\beta$: Least squares. (Equation 11-4 5e)
 
 Minimize: 
 $$ L=\sum \epsilon^2=\sum (y-\beta_0-\beta_1 x_1)^2$$
@@ -48,6 +48,42 @@ $$S_{xy} = \sum_{i=1}^n (y-\bar y)(x-\bar x)$$
 bh0 <- yb-bh1*xb ; yb <- mean(y) ; xb <- mean(y)
 bh1 <- sxy/sxx ; sxy <- sum((y-yb)*(x-xb)); sxx <- sum((x-xb)^2)
 ```
+
+### Simple Board Example
+```{r}
+y <- c(8,11,2)
+x <- c(3,5,1)
+n <- 3
+xb <- mean(x) ; xb
+yb <- mean(y) ; yb
+(x-xb)
+sum(x-xb)
+sxx <- sum((x-xb)^2) ;sxx
+(y-yb)
+sum(y-yb)
+((x-xb)*(y-yb))
+sxy <- sum(((x-xb)*(y-yb))) ; sxy
+
+bh1 <- sxy/sxx ; bh1
+bh0 <- yb - bh1*xb ; bh0
+
+yh <- bh0 + bh1*x ; yh
+e <- y-yh ; e
+sum(e)
+sse <- sum((y-yh)^2) ; sse
+sigmahsq <- sse/(n-2) ; sigmahsq
+se <- sqrt(sigmahsq)
+
+(y-yb)
+(y-yb)^2
+sst <- sum((y-yb)^2) ; sst
+
+d <- data.frame(y=y,x=x) ; d
+m <- lm(y~x,d) ; summary(m)
+
+```
+
+
 
 ### Example 11-1
 Load the data:
