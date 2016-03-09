@@ -1,7 +1,7 @@
 # Engineering Statistics
 IMSE 4410 Spring 2016. Copyright 2013-2016 by Timothy Middelkoop License CC by SA 3.0
 
-## Hypothesis Testing Part II (Chapter 9, Week 7)
+## Hypothesis Testing Part II - Chapter 9
 
 HO: "You can't prove anything, you can only disprove it"
 

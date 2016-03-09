@@ -1,0 +1,188 @@
+# Engineering Statistics
+IMSE 4410 Spring 2016. Copyright 2013-2016 by Timothy Middelkoop License CC by SA 3.0
+
+## Linear Regression - Chapter 11
+
+Linear regression is developing a model to explain the variation in sample data.  Before we assumed a homogeneous population of some distribution and asked questions about the parameters of this population (point estimation, confidence interval, and hypothesis test).
+
+Understand the assumptions behind regression.  Regression only works over the range of observed values, in some sense it is just interpolation.
+
+### Simple Linear Regression (Chapter 11-1)
+
+* One independent variable (regressor, x), 
+* One dependent variable (regressand, response varable, y), 
+* Continuous variables, linear relationship. (y=mx+b)
+* $y=mx+b$ -> $E(Y|x) = \mu_{Y|x} = \beta_0+\beta_1 x$ ; $Y=\hat\beta_0+\hat\beta_1 x + \epsilon$ ; $V(Y|x) = \sigma^2$
+
+$\epsilon$ is the error term, mean 0, unknown variance $\sigma^2$ and uncorrelated.
+
+Finding $\beta$: Least squares. (Equation 11-4 6e)
+
+Minimize: 
+$$ L=\sum \epsilon^2=\sum (y-\beta_0-\beta_1 x_1)^2$$
+ 
+or in R vector form notation
+```{r eval=FALSE}
+L=sum(e^2)=sum((y-b0-b1 *x1)^2)
+```
+
+Solve directly to get (Equation 11-6 5e): bh0 ($\hat\beta_0$) is the estimate.
+
+**Least squares normal equations**:
+
+$$n\hat\beta_0 + \hat\beta_1 \sum_{i=1}^n x = \sum_{i=1}^n y$$
+$$\hat\beta_0 \sum_{i=1}^n x + \hat\beta_1 \sum_{i=1}^n x^2 = \sum_{i=1}^n x\cdot y $$
+
+```{r eval=FALSE}
+n*bh0+bh1*sum(x)=sum(y) ;  bh0*sum(x)+bh1(sum(x^2))=sum(x*y)
+```
+
+Solving this we get the **least square estimates**:
+
+$$\hat\beta_0 = \bar y - \hat\beta_1 \cdot \bar x$$
+$$\hat\beta_1 = {S_{xy} \over S_{xx} }$$
+$$S_{xx} = \sum_{i=1}^n (x-\bar x)^2$$
+$$S_{xy} = \sum_{i=1}^n (y-\bar y)(x-\bar x)$$
+
+```{r eval=FALSE}
+bh0 <- yb-bh1*xb ; yb <- mean(y) ; xb <- mean(y)
+bh1 <- sxy/sxx ; sxy <- sum((y-yb)*(x-xb)); sxx <- sum((x-xb)^2)
+```
+
+### Example 11-1
+Load the data:
+```{r}
+ch11 <- read.csv("data/5e/ch11.csv",header=TRUE)
+nrow(ch11)
+
+d <- na.omit(data.frame(x=ch11$Example11.1Level,y=ch11$Example11.1Purity)) ; n <- nrow(d) ; n # [1] 20
+
+# Plot, it's a line.
+plot(y~x,d)
+
+```
+
+Note the presentation in the text is backwards, unravel and use an example (11-1 5e/6e)
+
+
+```{r}
+y <- d$y ; x <-d$x ; n <- nrow(d) ; n # [1] 20
+yb <- mean(y) ; yb # [1] 92.1605 
+xb <- mean(x) ; xb # [1] 1.196
+
+sxx <- sum((x-xb)^2) ; sxx # [1] 0.68088
+sxy <- sum((y-yb)*(x-xb)) ; sxy # [1] 10.17744
+
+bh1 <- sxy/sxx ; bh1 # [1] 14.94748
+bh0 <- yb-bh1*xb ; bh0 # [1] 74.28331
+
+# Plot with regression model
+plot(y~x,d) ; abline(bh0,bh1)
+
+# our fitted model is 
+yh <- bh0+bh1*x ; yh
+```
+
+**Estimating $\sigma^2$**
+
+The estimate of $\sigma^2$ is $\hat\sigma^2$ (sigmahsq). The residuals ($\epsilon=y-\hat y$) is the unexplained variance and is used to estimate $\sigma^2$. The error sum of squares (sse) is calculated as follows.  
+
+```{r}
+sse <- sum((y-yh)^2) ; sse # [1] 21.24982
+sigmahsq <- sse/(n-2) ; sigmahsq # [1] 1.180545
+```
+
+**Using R directly**
+
+```{r}
+
+m <- lm(y~x,d) ; summary(m)
+
+names(m)
+names(summary(m))
+
+## yh
+m$fitted.values
+
+## standard error
+sqrt(sigmahsq) # [1] 1.086529
+
+```
+
+#### References
+* Linear Regression http://www3.nd.edu/~steve/Rcourse/Lecture8v1.pdf
+
+
+### Linear Regression Details (Chapter 11-3)
+
+A more precise on the definition on our use of $y=mx+b$ in statistical terms.
+
+The simple linear regression model (observed) is: $Y = \beta_0 + \beta_1 x + \epsilon$,
+$\epsilon$ has mean of $0$ and variance of $\sigma^2$
+
+The fitted or estimated regression is: $\hat y = \hat\beta_0 + \hat\beta_1 x$
+
+For each observation we now get: $y_i = \hat\beta_0 + \hat\beta_1 x_i + \epsilon_i$, here
+ $e_i = y_i-\hat y_i$ is the residual.
+
+Since $\hat\beta_1$ depends on a random variable ($Y_i$) it too is a random variable.
+
+* $E(\hat\beta_1)=\beta_1$ thus it is an unbias estimator.
+* $V(\hat\beta_1)=\sigma^2/S_{xx}$, also
+* $E(\hat\beta_0)=\beta_0$ and 
+* $V(\hat\beta_0)=\sigma^2(1/n+\bar x^2/S_{xx})$
+
+Since we have an estimate of $\sigma^2$, $\hat\sigma^2={SS_E \over n-2}$, we can also provide estimates of the variance on $\hat\beta$. This variance, actually the square root of the variance, 
+is termed the *estimated standard error*.
+
+$$se(\hat\beta_1) = \sqrt{\hat\sigma^2 \over S_{xx}}$$
+
+These are in the std. Error column.
+
+
+```{r}
+
+## se(betahat_1)=sqrt(sigmahat^2/sxx)
+sebh1 <- sqrt(sigmahsq/sxx) ; sebh1
+
+## se(betahat_0)
+sebh0 <- sqrt(sigmahsq*(1/n+xb^2/sxx)) ; sebh0
+```
+
+### Hypothesis test on the Coefficients (Chapter 11-4)
+
+Hypotheses Tests in simple linear regression
+
+* H0:$\beta_1=\beta_{1,0}$, H1:$\beta_1 \ne \beta_{1,0}$
+
+This is testing if $\beta_1$ is a constant $\beta_{1,0}$.
+
+Assume $\epsilon$ is normal($0$,$\sigma^2$) and independently distributed, NID($0$,$\sigma^2$)
+
+From this we can derive a test statistic
+
+$$T_0 = {\hat\beta_1-\hat\beta_{1,0} \over \sqrt{\hat\sigma^2 / S_{xx}}} $$
+
+This is the general case, what we are interested in is when $\beta_{1,0}=0$ or
+H0:$\beta_1 = 0$, H1:$\beta_1 \ne 0$,
+A value of zero indicates no linear relationship!
+
+```{r}
+## H0:bh1=0, H1:hb1!=0
+t0 <- bh1/sebh1 ; t0
+
+## We can do this for beta0 as well.
+## H0:bh0=0, H1:bh1!=0
+t0 <- bh0/sebh0 ; t0
+```
+
+These are the t-values in the lm() regression.
+
+Reject H0 if $t>t_{\alpha/2,n-2}$ or p-value < $\alpha/2$
+
+```{r}
+alpha <- 0.05
+2*qt(alpha/2,n-2,lower.tail=FALSE)
+summary(m)
+```
+
