@@ -29,3 +29,41 @@ d <- data.frame(y=y,x=x) ; d
 m <- lm(y~x,d) ; summary(m)
 
 ```
+
+### Example 11-1
+```{r}
+ch11 <- read.csv("data/5e/ch11.csv",header=TRUE)
+nrow(ch11)
+
+d <- na.omit(data.frame(x=ch11$Example11.1Level,y=ch11$Example11.1Purity)) ; n <- nrow(d) ; n # [1] 20
+
+plot(y~x,d)
+
+x <- d$x; y <- d$y 
+
+xb <- mean(x) ; xb
+yb <- mean(y) ; yb
+
+sxx <- sum((x-xb)^2) ;sxx
+sxy <- sum((y-yb)*(x-xb)) ; sxy
+bh1 <- sxy/sxx ; bh1
+bh0 <- yb-bh1*xb ; bh0
+
+yh <- bh0 + bh1*x ; yh
+sum(y-yh)
+sse <- sum((y-yh)^2) ; sse
+sigmahsq <- sse/(n-2) ; sigmahsq
+se <- sqrt(sigmahsq) ; se
+
+## Plot the result
+plot(y~x,d) ; abline(bh0,bh1)
+
+m <- lm(y~x,d) ; summary(m)
+
+sebh1 <- sqrt(sigmahsq/sxx) ;sebh1 
+sebh0 <- sqrt(sigmahsq*(1/n+xb^2/sxx)) ;sebh0
+
+t0 <- bh1/sebh1 ; t0
+t0 <- bh0/sebh0 ; t0
+
+```
