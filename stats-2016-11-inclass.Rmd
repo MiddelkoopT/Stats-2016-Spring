@@ -1,0 +1,31 @@
+# Engineering Statistics
+IMSE 4410 Spring 2016. Copyright 2013-2016 by Timothy Middelkoop License CC by SA 3.0
+
+```{r}
+y <- c(8,11,2)
+x <- c(3,5,1)
+n <- length(x) ; n
+
+xb <- mean(x) ; xb
+yb <- mean(y) ; yb
+
+(x-xb)
+sxx <- sum((x-xb)^2) ; sxx
+(y-yb)
+(y-yb)*(x-xb)
+sxy <- sum((y-yb)*(x-xb)) ; sxy
+
+bh1 <- sxy/sxx ; bh1
+bh0 <- yb-bh1*xb ; bh0
+
+yh <- bh0 + bh1*x ; yh
+
+e <- (y-yh) ; e
+sum(e)
+sse <- sum((y-yh)^2) ; sse
+
+d <- data.frame(y=y,x=x) ; d
+
+m <- lm(y~x,d) ; summary(m)
+
+```
