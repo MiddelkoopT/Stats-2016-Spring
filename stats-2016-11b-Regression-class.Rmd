@@ -1,0 +1,36 @@
+# Engineering Statistics
+IMSE 4410 Spring 2016. Copyright 2013-2016 by Timothy Middelkoop License CC by SA 3.0
+
+## Linear Regression - In Class
+
+```{r}
+ch11 <- read.csv("data/5e/ch11.csv",header=TRUE)
+nrow(ch11)
+
+d <- na.omit(data.frame(x=ch11$Example11.1Level,y=ch11$Example11.1Purity)) ; n <- nrow(d) ; n # [1] 20
+
+plot(y~x,d)
+m <- lm(y~x,d) ; summary(m)
+
+y <- d$y
+x <- d$x
+yb <- mean(y) ; yb
+xb <- mean(x) ; xb
+sxx <- sum((x-xb)^2) ; sxx
+sxy <- sum((x-xb)*(y-yb)) ; sxy
+bh1 <- sxy/sxx ; bh1
+bh0 <- yb-bh1*xb ; bh0
+yh <- bh0+bh1*x ; yh
+ssr <- sum((yh-yb)^2) ; ssr
+sse <- sum((y-yh)^2) ; sse
+sst <- sum((y-yb)^2) ; sst
+ssr+sse ; sst
+msr <- ssr/1 ; msr
+mse <- sse/(n-2) ; mse 
+f0 <- msr/mse ; f0
+pf(f0,1,n-2, lower.tail=FALSE)
+rsq <- ssr/sst ; rsq
+
+anova(m)
+
+```
