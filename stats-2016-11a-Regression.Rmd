@@ -1,3 +1,6 @@
+---
+output: pdf_document
+---
 # Engineering Statistics
 IMSE 4410 Spring 2016. Copyright 2013-2016 by Timothy Middelkoop License CC by SA 3.0
 

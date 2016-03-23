@@ -1,0 +1,207 @@
+# Engineering Statistics
+IMSE 4410 Spring 2016. Copyright 2013-2016 by Timothy Middelkoop License CC by SA 3.0
+
+## Linear Regression - Chapter 11
+
+```{r results='hide'}
+ch11 <- read.csv("data/5e/ch11.csv",header=TRUE)
+nrow(ch11)
+
+d <- na.omit(data.frame(x=ch11$Example11.1Level,y=ch11$Example11.1Purity)) ; n <- nrow(d) ; n # [1] 20
+
+y <- d$y ; x <-d$x ; n <- nrow(d) ; n # [1] 20
+yb <- mean(y) ; yb # [1] 92.1605 
+xb <- mean(x) ; xb # [1] 1.196
+sxx <- sum((x-xb)^2) ; sxx # [1] 0.68088
+sxy <- sum((y-yb)*(x-xb)) ; sxy # [1] 10.17744
+bh1 <- sxy/sxx ; bh1 # [1] 14.94748
+bh0 <- yb-bh1*xb ; bh0 # [1] 74.28331
+yh <- bh0+bh1*x ; yh
+m <- lm(y~x,d) ; s <- summary(m) ; s
+```
+
+### Chapter 11-4: Analysis of Variance
+
+This entire class is about accounting for variance.
+
+Where did it go?  How do we see it?
+
+We start at the beginning, total variance, which is the distance between an 
+observation and the mean of the sample, then explain it by the regression
+model and the natural error term (NID!).
+
+* $SS_T$ (sst), total corrected sum of squares;
+* $SS_R$ (ssr), regression sum of squares;
+* $SS_E$ (sse), error sum of squares;
+* $SS_T = SS_R + SS_E$ (sst = ssr + sse)
+
+Know theses, understand theses, you should be able to think it out on a test.
+
+
+```{r}
+ssr <- sum((yh-yb)^2) ; ssr # [1] 152.1271
+sse <- sum((y-yh)^2) ; sse # [1] 21.24982
+sst <- sum((y-yb)^2) ; sst # [1] 173.3769
+ssr + sse # [1] 173.3769
+```
+
+Note we calculate this directly, not using the "old" way in the text.
+Exams will be structured such that it is reasonable to take the "R" approach
+
+From this we can test if $\hat\beta_1$ is significant.
+Please read section 11-4.2 to understand where this came from.
+
+* H0:$\hat\beta_1=0$, H1:$\hat\beta_1\ne0$
+* Test Statistic: $F_0={SS_R/1 \over SS_E/(n-2)} = {MS_R \over MS_E}$, follows the F distribution with 1,n-2 degress of freedom (DOF)
+* Reject H0 if $f_0 > f_{\alpha,1,n-2}$, or p-value < $\alpha$
+
+```{r}
+## msr and mse are mean squares and is the sum of square divided by the DOF.
+msr <- ssr/1 ; msr # [1] 152.1271
+mse <- sse/(n-2) ; mse # [1] 1.180545
+
+## f0
+f0 <- msr/mse ; f0 # [1] 128.8617
+
+## p-value
+pf(f0,1,n-2,lower.tail=FALSE) # [1] 1.227314e-09
+```
+
+We reject H0 concluding that $\hat\beta_1$ is significant with a p-value of very small.
+
+It can be shown that the t-statistic is the same of the f-statistic.
+
+```{r}
+m <- lm(y~x,d) ; summary(m)
+anova(m)
+```
+
+### Confidence Intervals
+
+Section 11-5 and 11-6 are not on the exam, you can find the intervals
+with the following R-code.  You should be able to interpret these for the exam.
+
+```{r}
+p <- predict(m,interval="confidence") #; p
+plot(x,y) ; abline(bh0,bh1)
+curve(predict(m,data.frame(x=x),interval="confidence")[,'lwr'],add=T)
+curve(predict(m,data.frame(x=x),interval="confidence")[,'upr'],add=T)
+```
+
+### Visualization and Adequacy (Section 11-7, Week 10)
+
+```{r}
+## R diagnostic plots
+plot(m)
+## plot(m):1 Residual vs Fitted
+## plot(m):2 normq-q; residuals v.s. cumulative norm 
+
+## Figure 11-11 residual vs predicted (fitted)
+e <- y - yh
+plot(yh,e) ;  abline(0,0)
+
+## Figure 11-10 cumulative norm v.s. residuals (normq-q inverted)
+## This plot orders the data on x (the residuals) and plots that against where it should be on the distribution (normal) along the y axis (as quartiles).
+qqnorm(e,datax=TRUE) ; qqline(e,datax=TRUE)
+
+## Plot a random sample that is sorted
+## we see this is a linear line, this is what is expected, we just plot this v.s. the actual for the qq-plot.
+d1 <- rnorm(1000)
+plot(sort(d1))
+plot(sort(pnorm(d1)))
+
+
+## Figure 11-12: Residuals v.s. x
+plot(x,e) ; abline(0,0)
+```
+
+### $R^2$ and Adjusted $R^2$
+
+This is simply the ratio of the variance explained by the regression
+over the total variance (in some sense the percent accounted for)
+
+```{r results='hide'}
+## recalculate ssr, sse and sst
+ssr <- sum((yh-yb)^2) ; ssr # [1] 152.1271
+sse <- sum((y-yh)^2) ; sse # [1] 21.24982
+sst <- sum((y-yb)^2) ; sst # [1] 173.3769
+
+## R^2
+rsq <- ssr/sst ; rsq # [1] 0.8774357
+
+s$r.squared # [1] 0.8774357
+```
+
+Since this is abused, we penalize for the number of parameters used in the model.
+
+```{r results='hide'}
+## Adjusted R^2
+arsq <- 1 - ((1-rsq)*(n-1))/(n-1-1) ; arsq # [1] 0.8706266
+
+s$adj.r.squared # [1] 0.8706266
+```
+
+Section 11-8: Correlation.  Do not attempt.  Not covered.
+
+### Regression on transformed variables (Section 11-9, Week 10)
+
+```{r}
+## If it is not linear, make it linear.
+x <- seq(0,10,0.1)
+d <- data.frame(y=x^2,x=x)
+plot(y~x,d,type='l')
+plot(log(y)~log(x),d,type='l')
+
+## lets try to fit it.
+m <- lm(y~x,d) ; summary(m)
+d$yh <- m$fitted
+
+## Plot the straight line
+plot(y~x,d) ; abline(m$coef[1],m$coef[2])
+
+## Use the predicted values (used later)
+plot(y~x,d) ; points(yh~x,d,type='l')
+
+## Good r squared, but the diagnostics are not good.
+plot(m)
+
+## Lets transform the variables in R
+## I() is the tranformation, the *+^. mean something else
+m <- lm(y~I(x^2),d) ; summary(m)
+d$yh <- m$fitted ; d$dy
+plot(y~x,d) ; points(yh~x,d,type='l')
+
+summary(m)
+```
+
+#### Example 11.9 (5e) Windmill power
+
+```{r}
+## Example in the text
+d <- na.omit(data.frame(x=ch11$Example11.9Vel,y=ch11$Example11.9DC)) ; n <- nrow(d) ; n
+plot(y~x,d)
+
+m <- lm(y~x,d) ; summary(m)
+
+## Diagnostics.
+plot(m)
+## not so good.
+
+## Try this, yes looks better.
+plot(y~I(1/x),d)
+
+## model
+m <- lm(y~I(1/x),d) ; summary(m)
+## Much stronger result.
+```
+
+### Logistic Regression (Section 11-1)
+Cover this on your own, not on exam.  Here is the R code for this section.
+
+```{r}
+d <- data.frame(x=c(53,56,57,63,66,67,67,67,68,69,70,70,70,70,72,73,75,75,76,76,78,79,80,81),y=c(1,1,1,0,0,0,0,0,0,0,0,1,1,1,0,0,0,1,0,0,0,0,0,0)) ; n <- nrow(d) ; n
+m <- glm(y~x,d,family="binomial") ; summary(m)
+d$yh <- m$fitted
+plot(y~x,d) ; points(yh~x,d,type='l')
+
+```
