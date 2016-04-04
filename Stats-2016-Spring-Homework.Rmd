@@ -31,3 +31,19 @@ Chapter 9 (5e):
 Graduate/Extra:
 
 4. Exercises from 9-4: 9-71, 9-74, 9-75, 9-79
+
+## Homework Chapter 11
+Chpater 11 (5e)
+
+Do by hand, with R using vectors, and with lm if applicable
+
+1. Exercises from Chapter 11-2: 11-3, 11-5, 11-7, 11-9
+2. Exercises from Chapter 11-4: 11-25, 11-27 (1,b,d), 11-29
+
+Do by hand, with R using vectors, and with lm if applicable
+
+3. Section 11-7: 11-53, 11-55 (probability plot is the norm-qq/qqplot)
+
+Do it using the high level functions.
+
+4. Section 11-9: 11-79
