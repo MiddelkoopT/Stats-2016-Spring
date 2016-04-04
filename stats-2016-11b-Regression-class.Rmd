@@ -34,3 +34,34 @@ rsq <- ssr/sst ; rsq
 anova(m)
 
 ```
+
+Class 2
+
+```{r}
+y <- c(11,8,26) ; x <- c(4,3,5) 
+mean(x) ; mean(y)
+d <- data.frame(y=y,x=x) ; d
+
+m <- lm(y~x,d) ; summary(m)
+anova(m)
+```
+
+Example 11.9
+
+```{r}
+ch11 <- read.csv("data/5e/ch11.csv",header=TRUE)
+d <- na.omit(data.frame(x=ch11$Example11.9Vel,y=ch11$Example11.9DC)) ; n <- nrow(d) ; n
+
+plot(y~x,d)
+m <- lm(y~x,d) ; summary(m)
+## Not linear
+
+plot(y~I(1/x),d)
+m <- lm(y~I(1/x),d) ; summary(m)
+plot(m)
+
+
+
+```
+
+
