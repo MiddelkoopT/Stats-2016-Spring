@@ -1,0 +1,142 @@
+---
+output: pdf_document
+---
+# Engineering Statistics
+IMSE 4410 Spring 2016. Copyright 2013-2016 by Timothy Middelkoop License CC by SA 3.0
+
+## Multiple Linear Regression - Chapter 12
+
+### Section 12-1.3 Matrix Approach to Linear Regression
+
+Note all the folloing are vectors/matrix variables:
+
+* System of Equations: $y=X\beta+\epsilon$.
+  + $X$ is the model ($n\times p$) matrix, the first column (c) is 1 and each column is the regressors, the rows are the samples.
+  + $\beta$ is the regresssion coefficients
+  + $\epsilon$ is the random errors.
+* Normal Equations: $X'X \hat\beta = X'y$
+* Least Squares estimate of $\hat\beta$: $\hat\beta=(X'X)^{-1}X'y$
+* Fitted model: $y=X\hat\beta$
+* Residual: $e=y-\hat y$
+
+### Example 12.1 Wire Bond Strength.
+
+```{r}
+ch12 <- read.csv("data/5e/ch12.csv",header=TRUE)
+nrow(ch12)
+```
+
+```{r}
+## note the c column and the order used later.
+d <- na.omit(data.frame(y=ch12$Example12.1S,c=1,x1=ch12$Example12.1L,x2=ch12$Example12.1H))
+n <- nrow(d) ; n
+
+plot(d)
+
+## Model
+m <- lm(y~x1+x2,d) ; s <- summary(m) ; s
+anova(m)
+plot(m)
+
+## y:(n,1) X:(n,p) betah:(p,1) e:(n,1)
+x <- data.matrix(d[2:4]) ; x[0:5,]
+y <- data.matrix(d[1]) ; y[0:5]
+
+bh = solve(t(x) %*% x) %*% t(x) %*% y ; bh
+
+## yh and e, verify with text.
+yh <- x %*% bh ; yh[0:5,]
+e <- y-yh ; e[0:5,]
+
+## three parameters (p=k+1)
+k <- ncol(d)-2 ; k
+p <- k+1 ; p # [1] 3
+
+## Estimating \sigma^2, sigmahsq
+sse <- sum(e^2) ; sse # [1] 115.1735
+
+sigmahsq <- sse/(n-p) ; sigmahsq # [1] 5.235158
+
+s$sigma^2 # [1] 5.235158
+```
+
+### Section 12-1.4 Properties of the Least Squares Estimators.
+
+When we assume that the $\epsilon$ are independent with mean of zero and variance of $\sigma^2$.  From this we can determine the estimated standard error of $\hat\beta$.  We can find this from the covariance matrix $C=(X'X)^{-1}$.
+
+$$V(\hat\beta_j)=\sigma^2 C_{jj}$$
+$$cov(\hat\beta_i,\hat\beta_j)=\sigma^2C_{ij}$$
+$$se(\hat\beta_j)=\sqrt{\hat\sigma^2 C_{jj}}$$
+
+The **Estimated Standard Error** (*Std. Error* in R) is $se(\hat\beta_j)$.
+
+```{r}
+## Compute the Covariance Matrix
+c <- solve(t(x) %*% x)
+c
+
+## Compute the estimated standard error (sebh)
+sqrt(sigmahsq*c[1,1]) ; sqrt(sigmahsq*c[2,2]) ; sqrt(sigmahsq*c[3,3])
+
+## Matrix form (maintains labels as well)
+sqrt(diag(sigmahsq*c))
+
+## Covariance 
+sigmahsq*c
+
+## R² (multiple R-sqared)
+yb <- mean(d$y) ; yb # [1] 29.0328
+
+ssr <- sum((yh-yb)^2) ; ssr # [1] 5990.771
+sst <- sum((y-yb)^2) ; sst # [1] 6105.945
+sse+ssr # [1] 6105.945
+
+rsq <- ssr/sst ; rsq # [1] 0.9811375
+s$r.sq # [1] 0.9811375
+
+## Check with anova
+a <- anova(m) ; a
+names(a)
+
+sum(a$Sum) # [1] 6105.945
+
+## Mean Squared corrects for the DOF
+mse <- sse/(n-p) ; mse # [1] 5.235158
+```
+
+### Section 12-2 Hypothesis Tests in Multiple Linear Regression
+
+* H0: $\beta_1=\beta_2 = \cdots = \beta_k = 0$
+* H1: $\beta_j \ne 0$ for at least one $j$
+* At least one variable contributes significantly to the model.
+* Test Statistic: 
+$$F_0={SS_R/k \over SS_E/(n-p)} = {MS_R \over MS_E}$$ with $k$ and $n-p$ degrees of freedom.
+
+```{r}
+## Significance of regression (p=k+1)
+## H0:b1=b2=b3...=0 H1:b1!=0 for at least one.
+msr <- ssr/k ; msr
+mse <- sse/(n-p) ; mse
+f0 <- msr/mse ; f0 # [1] 572.1672
+pf(f0,k,n-p,lower.tail=FALSE)
+```
+
+* What are the F-stats in the ANOVA though?
+* It is the test of the significance of adding a variable
+* it is equivalent to the t-test.
+
+### 12-3 Confidence Intervals on multiple parameters.
+
+* In principal how is this found? Specifically where are the equations?
+* How is this used?
+* Undergraduate: read and follow this section in the text.
+* Graduate/Extra: compute and verify the results below using the text.
+
+```{r}
+## Confidence Intervals on the regression coefficients.
+confint(m)
+
+## Confidence Interval on the mean response
+predict(m, data.frame(x1=8,x2=275))
+
+```
