@@ -47,3 +47,21 @@ Do by hand, with R using vectors, and with lm if applicable
 Do it using the high level functions.
 
 4. Section 11-9: 11-79
+
+## Homework Chapter 12
+Chapter 12 (5e)
+
+1. Redo the cacluations using R with vectors and functions for Example 12-1, 12-2 in Chapter 12.
+2. 12-5 use matrix calc. for a,b,(graduate/extra c,d) use function calc. for a,b,c,d.
+3. 12-7 use function calc.  The solution differs slightly.
+4. 12-17 use function calc.  Solutions may differ slightly.
+5. Any two odd number of your choice.
+
+## Homework Chapter 13
+Chapter 13 (5e)
+
+1. Compute the sst, sse, and ssf for 13-3, 13-5, 13-13 (note the missing values) using the vector and function methods
+2. Problems 13-3, 13-5, 13-7, do the calculation by hand, using R with vectors, and R with functions.
+   13-7-c do a TurkyHSD analysis instead, which is similar to the text analysis.
+3. Problem 13-13 using R functions.
+4. Problem 13-37 by hand, R with vectors, and functions.
