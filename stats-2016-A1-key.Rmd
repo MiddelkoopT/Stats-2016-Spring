@@ -63,7 +63,7 @@ qnorm(0.10/2,lower.tail=FALSE)
 
 e.  For a normally distributed random variable $X$ with $\mu= 16$ and $\sigma = 9$ what is the probability that $X \le 12$? (2 points)
 
-$$P(X\le12)=P(Z\le{12-16\over9})=P(Z<-0.45)=1-P(Z<0.45)=1-0.6736=0.3265$$
+$$P(X\le12)=P(Z\le{12-16\over9})=P(Z \le0.45)=1-P(Z\le0.45)=1-0.6736=0.3265$$
 
 ```{r}
 pnorm(12,mean=16, sd=9, lower.tail=TRUE)

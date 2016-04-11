@@ -67,7 +67,7 @@ e <- y-yh ; e[0:5,]
 k <- ncol(d)-2 ; k
 p <- k+1 ; p # [1] 3
 
-## Estimating σ² (sigma^2), sigmahsq
+## Estimating \sigma^2, sigmahsq
 sse <- sum(e^2) ; sse # [1] 115.1735
 
 sigmahsq <- sse/(n-p) ; sigmahsq # [1] 5.235158
