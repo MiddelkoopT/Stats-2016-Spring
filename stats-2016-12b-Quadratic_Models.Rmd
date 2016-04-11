@@ -1,0 +1,99 @@
+# Engineering Statistics
+IMSE 4410 Spring 2016. Copyright 2013-2016 by Timothy Middelkoop License CC by SA 3.0
+
+## Multiple Linear Regression - Chapter 12
+
+### Section 12-5 Quadratic Models.
+
+```{r}
+ch12 <- read.csv("data/5e/ch12.csv",header=TRUE)
+nrow(ch12)
+```
+
+```{r}
+d <- na.omit(data.frame(y=ch12$Example12.12y,x=ch12$Example12.12x))
+n <- nrow(d) ; n
+
+plot(y~x,d)
+
+## Quadratic model
+m <- lm(y~x+I(x^2),d) ; s <- summary(m) ; s
+
+## there is also a poly function, but we must specify raw not orthogonal polynomials. 
+m <- lm(y~poly(x,2,raw=TRUE),d) ; s <- summary(m) ; s
+
+```
+
+### Wine Quality (Read this section!)
+
+```{r}
+d <- na.omit(data.frame(quality=ch12$Example12.14Quality,clarity=ch12$Example12.14Clarity, aroma=ch12$Example12.14Aroma, body=ch12$Example12.14Body, flavor=ch12$Example12.14Flavor, oakiness=ch12$Example12.14Oakiness)) ; n <- nrow(d) ; n
+names(d)
+plot(d)
+
+m <- lm (quality~clarity+aroma+body+flavor+oakiness,d) ; s <- summary(m) ; s
+plot(m)
+
+## Stepwise regression, follow the f
+names(s)
+m <- lm (quality~clarity,d) ; s <- summary(m) ; s$f
+#       value       numdf       dendf 
+#  0.02914426  1.00000000 36.00000000 
+
+m <- lm (quality~aroma,d) ; s <- summary(m) ; s$f
+#    value    numdf    dendf 
+# 36.04434  1.00000 36.00000 
+
+m <- lm (quality~body,d) ; s <- summary(m) ; s$f
+#    value    numdf    dendf 
+# 15.50761  1.00000 36.00000 
+
+m <- lm (quality~flavor,d) ; s <- summary(m) ; s$f
+#    value    numdf    dendf 
+# 59.78913  1.00000 36.00000 
+
+m <- lm (quality~oakiness,d) ; s <- summary(m) ; s$f
+#       value       numdf       dendf 
+#  0.07983769  1.00000000 36.00000000 
+
+## Flavor
+
+m <- lm (quality~flavor+clarity,d) ; s <- summary(m) ; s$f
+#    value    numdf    dendf 
+# 30.23648  2.00000 35.00000 
+
+m <- lm (quality~flavor+aroma,d) ; s <- summary(m) ; s$f
+#    value    numdf    dendf 
+# 33.75224  2.00000 35.00000 
+
+m <- lm (quality~flavor+body,d) ; s <- summary(m) ; s$f
+#    value    numdf    dendf 
+# 29.37061  2.00000 35.00000 
+
+m <- lm (quality~flavor+oakiness,d) ; s <- summary(m) ; s$f
+#    value    numdf    dendf 
+# 34.13943  2.00000 35.00000 
+
+## Oakiness
+
+m <- lm (quality~flavor+oakiness+clarity,d) ; s <- summary(m) ; s$f
+#    value    numdf    dendf 
+# 24.09615  3.00000 34.00000 
+
+m <- lm (quality~flavor+oakiness+aroma,d) ; s <- summary(m) ; s$f
+#    value    numdf    dendf 
+# 26.92486  3.00000 34.00000 
+
+m <- lm (quality~flavor+oakiness+body,d) ; s <- summary(m) ; s$f
+#    value    numdf    dendf 
+# 22.45432  3.00000 34.00000 
+
+## Aroma
+m <- lm (quality~flavor+oakiness+aroma,d) ; s <- summary(m) ; s
+anova(m)
+
+m <- lm (quality~flavor+oakiness,d) ; s <- summary(m) ; s
+anova(m)
+
+```
+
