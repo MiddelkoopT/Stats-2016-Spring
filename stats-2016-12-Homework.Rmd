@@ -1,0 +1,98 @@
+# Engineering Statistics 
+Engineering Statistics (IMSE 4410) Spring 2016. Copyright 2013-2016 by Timothy Middelkoop License CC by SA 3.0
+
+## Homework Chapter 12
+
+Chpater 12 (5e)
+
+```{r}
+ch12 <- read.csv("data/5e/ch12.csv",header=TRUE) ; nrow(ch12)
+
+## 12-5 (12-9 6e) Patient Satisfaction
+d <- na.omit(data.frame(
+  			satis=ch12$Ex12.5Satis,
+				c=1,
+				age=ch12$Ex12.5Age,
+				severity=ch12$Ex12.5Severity,
+				surgmed=ch12$Ex12.5Surg.Med,
+				anxiety=ch12$Ex12.5Anxiety
+))
+n <- nrow(d) ; n
+
+## a) matrix
+
+parameters <- c(2,3,4,6)
+x <- data.matrix(d[parameters]) ; x[c(1,2,24,25),]
+
+y <- data.matrix(d[1]) ; y[c(1,2,24,25)]
+
+bh <- solve(t(x) %*% x) %*% t(x) %*% y ; bh
+
+yh <- x %*% bh ; yh[c(1,2,24,25)]
+
+e <- y-yh ; e[c(1,2,24,25)]
+
+p <- length(parameters) ; p # [1] 4
+
+## b) matrix estimate standard deviation
+
+sse <- sum(e^2) ; sse # [1] 1039.935
+
+sigmahsq <- sse/(n-p) ; sigmahsq # [1] 49.52071
+
+## c) matrix graduate/extra
+
+## Function methods
+m <- lm(satis~age+severity+anxiety,d) ; s <- summary(m) ; s
+
+## a) function Regression Coefficients
+m$coef
+
+## b) function Estimated Standard Deviation
+s$sigma ; s$sigma^2
+
+## c) function Standard Errors
+s$coef[,'Std. Error']
+
+## d) function precision.
+## Standard errors differ for the parameters, so different precision.
+
+
+## 12-7 (12-11 6e) Fuel Economy
+d <- na.omit(data.frame(
+				mpg=ch12$Ex12.7.mpg,
+				cid=ch12$Ex12.7.cid,
+				rhp=ch12$Ex12.7.rhp,
+				etw=ch12$Ex12.7.etw,
+				axel=ch12$Ex12.7.axle,
+				nv=ch12$Ex12.7.n.v
+)) ; n <- nrow(d) ; n	# [1] 21
+
+m <- lm(mpg~cid+rhp+etw+axel+nv,d) ; s <- summary(m) ; s				
+
+s$sigma^2
+
+## Interestingly enough the text solution is slightly different
+## The dataset has an extra row, but it still does not match!
+
+## CORRECTION: there is actually 21 rows, it is a prediction interval
+## not a confidence interval.
+
+predict(m, d[1,], interval="predict")
+
+## 12-17 (12-21 6e)
+d <- na.omit(data.frame(
+				rate=ch12$Ex12.17.Rating.Pts,
+				comp=ch12$Ex12.17.Pct.Comp,
+				td=ch12$Ex12.17.Pct.TD,
+				int=ch12$Ex12.17.Pct.Int
+)) ; n <- nrow(d) ; n
+
+m <- lm(rate~comp+td+int,d) ; s <- summary(m) ; s				
+
+s$sigma^2 # [1] 4.140367
+
+s$coef[,'Std. Error']
+
+predict(m, data.frame(comp=60,td=4,int=3))
+```

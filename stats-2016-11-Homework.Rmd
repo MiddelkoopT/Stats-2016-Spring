@@ -1,0 +1,107 @@
+# Engineering Statistics 
+Engineering Statistics (IMSE 4410) Spring 2016.  Copyright 2013-2016 by Timothy Middelkoop License CC by SA 3.0
+
+## Homework Chapter 11
+
+Chpater 11 (5e)
+
+Do by hand, with R using vectors, and with lm if applicable
+
+1. Exercises from Chapter 11-2: 11-3, 11-5, 11-7, 11-9
+2. Exercises from Chapter 11-4: 11-25, 11-27 (1,b,d), 11-29
+
+Do by hand, with R using vectors, and with lm if applicable
+
+3. Section 11-7: 11-53, 11-55 (probability plot is the norm-qq/qqplot)
+
+Do it using the high level functions.
+
+4. Section 11-9: 11-79
+
+```{r}
+ch11 <- read.csv("data/5e/ch11.csv",header=TRUE) ; nrow(ch11)
+
+##  Section 11-7
+
+## 11-53 (11-63 6e): Extends 11-5, lbs of steam
+d <- na.omit(data.frame(rating=ch11$Ex11.3.Rating,yards=ch11$Ex11.3.Yds)) ; n <- nrow(d) ; n
+y <- d$rating ; x<- d$yards
+
+yb <- mean(y) ;  xb <- mean(x) ; yb ; xb
+m <- lm(y~x,d) ; s <- summary(m) ; s
+yh <- m$fitted.values
+e <- m$residuals
+
+## a)
+ssr <- sum((yh-yb)^2) ; ssr # [1] 1672.465
+sse <- sum((y-yh)^2) ; sse # [1] 817.0568
+sst <- sum((y-yb)^2) ; sst # [1] 2489.522
+
+## R^2
+rsq <- ssr/sst ; rsq
+# [1] 0.6718018
+
+s$r.squared
+# [1] 0.6718018
+
+## b)
+qqnorm(e,datax=TRUE) ; qqline(e,datax=TRUE)
+
+## c)
+plot(yh,e) ;  abline(0,0)
+plot(y,e) ;  abline(0,0)
+
+
+## 11-55 (11-65 6e): Extends 11-5, lbs of steam
+d <- na.omit(data.frame(temp=ch11$Ex11.5.Temp,usage=ch11$Ex11.5.Usage)) ; n <- nrow(d) ; n
+y <- d$usage ; x <- d$temp
+
+yb <- mean(y) ;  xb <- mean(x) ; yb ; xb
+m <- lm(y~x,d) ; s <- summary(m) ; s
+yh <- m$fitted.values
+e <- m$residuals
+
+## a)
+ssr <- sum((yh-yb)^2) ; ssr # [1] 280583.1
+sse <- sum((y-yh)^2) ; sse # [1] 37.74609
+sst <- sum((y-yb)^2) ; sst # [1] 280620.9
+
+
+## R^2
+rsq <- ssr/sst ; rsq # [1] 0.9998655
+
+s$r.squared # [1] 0.9998655
+
+## b) normqq/qqplot
+qqnorm(e,datax=TRUE) ; qqline(e,datax=TRUE)
+
+## c)
+plot(yh,e) ;  abline(0,0)
+plot(y,e) ;  abline(0,0)
+
+
+## 11-79 (11-89 6e): Electric Utility.
+d <- na.omit(data.frame(x=ch11$Ex11.79.x,y=ch11$Ex11.79.y)) ; n <- nrow(d) ; n
+y <- d$y ; x <- d$x
+
+## a)
+plot(y~x,d)
+
+## b)
+## At this point we should give up on doing it by hand, you should know it now.
+m <- lm(y~x,d) ; s <- summary(m) ; s
+
+## p-value < 0.05 (p-value is 8.8e-15)
+d$yh <- m$fitted
+d$e <- m$residuals
+plot(e~yh,d) ; abline(0,0)
+
+## c)
+m <- lm(I(sqrt(y)~x),d) ; s <- summary(m) ; s
+
+## Note how the R-sqared goes down.
+## Standard error is reduced.
+
+## This dataset still has issues.
+plot(m)
+```
