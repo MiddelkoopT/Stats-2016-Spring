@@ -1,0 +1,275 @@
+# Engineering Statistics
+IMSE 4410 Spring 2016.  Copyright 2013-2016 by Timothy Middelkoop License CC by SA 3.0
+
+## Design of Experiments with Several Factors - Chapter 14
+
+```{r}
+ch14 <- read.csv("data/5e/ch14.csv",header=TRUE)
+nrow(ch14)
+```
+
+### Two Factorial Experiments. (14-3)
+
+Done on the board first fully by hand.  Similar to block but extended to factor a, factor b, and replication.
+
+Model: $$y_{ijk} = \mu + A_i + B_j + AB_{ij} + e_{ijk}$$ (different notation to the text)
+
+SS Identity: $$SS_T=SS_A+SS_B+SS_{AB}+SS_E$$ $SS_{AB}$ is the interaction between a and b
+
+A full factorial experiment has n replications.  Experiment *must* be done in random order.
+
+$H_0$: no factor/effect effect, all $A_i$, $B_j$, $AB_{ij}$ is zero (see text).
+
+$H_1$: one of them is non-zero so that factor/interaction has 
+an effect.
+
+```{r}
+## Example 14-1, primer paints, method:{dipping, spraying} and primer:{1,2,3}
+
+d <- na.omit(data.frame(y=ch14$Example14.1Adhesion,a=factor(ch14$Example14.1Primer),b=factor(ch14$Example14.1Method)))
+
+## Use R directly
+m <- aov(y~a*b,d) ; summary(m)
+
+## Lets do this by hand.
+a <- length(levels(d$a)) ; a # [1] 3
+b <- length(levels(d$b)) ; b # [1] 3
+
+## What ?!
+levels(d$b)
+```
+
+What is this?  Data quality is always an issue! Check. Check. Check.
+
+Lets try a new approach, the na.omit does not work here. Sometimes simple is not better than correct.
+
+```{r}
+## This is the correct way to block the data off, lets rename the columns at the same time.
+p <- ch14[c('Example14.1Adhesion','Example14.1Primer','Example14.1Method')]
+names(p) <- c('adhesion','primer','method')
+N <- nrow(na.omit(p)) ; p <- p[1:N,] ; N # [1] 18
+
+## This looks a lot cleaner now.
+d <- data.frame(y=p$adhesion,a=factor(p$primer),b=factor(p$method))
+m <- aov(y~a*b,d) ; summary(m)
+
+## Interestingly enough the aov function does the right thing when handling the factor earlier.
+
+a <- length(levels(d$a)) ; a # [1] 3
+b <- length(levels(d$b)) ; b # [1] 2
+
+## Replications per combination of factors (not N)
+n <- length(d$y)/a/b ; n 
+# [1] 3
+
+yb <- mean(d$y); yb # [1] 4.988889
+
+sst <- sum((d$y-yb)^2) ; sst # [1] 10.71778
+
+## check with text (row)
+aggregate(y~a,d,c)
+
+## compute row averages.
+yba <- aggregate(y~a,d,mean)$y ; yba
+
+## should be the column averages
+ybb <- aggregate(y~b,d,mean)$y ; ybb
+
+## check with the text (example reports column sums)
+aggregate(y~b,d,sum)$y
+
+## ssa
+ssa <- b*n*sum((yba-yb)^2) ; ssa
+
+## ssb
+ssb <- a*n*sum((ybb-yb)^2) ; ssb
+
+## ssab  
+## n * sum_a,sum_b (ybij-yba-ybj-yb)^2
+
+## This requires the sample mean (k)
+aggregate(y~a+b,d,c)
+
+bab <- aggregate(y~a+b,d,mean) ; bab
+
+## Don't you like it when things work the way you would expect them.
+```
+
+The problem with the next analysis is that we have a double sum with varying indexes. Again we are getting bit by "simpler is not always better than correct."  As we do more sophisticated things and start removing assumptions.
+
+Before we were assuming that the factors where in order (they are), and are values (an i and j).  This time we need to use factors and the order of the data can be arbitrary.
+
+```{r}
+## Group the y's by common a+b.  This works since bab is produced the same
+ab <- aggregate(y~a+b,d,c) ; ab
+sse <- sum((ab$y - bab$y)^2) ; sse # [1] 0.9866667
+```
+
+We could continue to use this method but it becomes more difficult. See Advanced R below for details.
+
+We can also carry the summary stats in the main data frame.
+Like the strategy for sse as before with factors (not indexes) and multiple factors.
+
+```{r}
+## We use dd since we are altering our data frame.
+## The hard part is to pull in the multiple columns, here we need to merge the data
+dd <- d
+dd$yba <- yba[d$a]
+dd$ybb <- ybb[d$b]
+dd$yb <- yb
+dd <- merge(dd,bab,by=c('a','b'),suffixes=c('','bn')) ; dd
+
+## Now we can find ssab (note the dropping on n multiplyer)
+ssab <- sum((dd$ybn-dd$yba-dd$ybb+dd$yb)^2) ; ssab # [1] 0.2411111
+
+## Verify solution
+sst
+ssa+ssb+ssab+sse # [1] 10.71778
+
+## We could have also used this on sbb and sba (note removeal of factor before)
+ssa <- sum((dd$yba-yb)^2) ; ssa # [1] 4.581111
+ssb <- sum((dd$ybb-yb)^2) ; ssb # [1] 4.908889
+sse <- sum((dd$y-dd$ybn)^2) ; sse # [1] 0.9866667
+ssa+ssb+ssab+sse # [1] 10.71778
+
+summary(m)
+```
+
+### Advanced R.
+This is where it gets tricky.  Do not expect this to be on the exam under R. However this will give you a good idea how indexing works in R.
+
+```{r}
+## To help us along lets first do the following:
+## Lets regenerate ybb again to remind us of what is going on
+bb <- aggregate(y~b,d,mean) ; bb
+
+## just show the y column
+ybb <- bb$y ; ybb
+
+## Now show the levels (Dip/Spray) for the data
+d$b
+
+## For example the we can store the 'spray' level in spray
+spray <- bb[2,'b'] ; spray
+
+## Extrat a single element
+ybb[spray]
+
+## now report the ybb for each row in b, they should match, (similar to previous method)
+ybb[d$b]
+
+## Symmetric on bb
+bb$y[d$b]
+
+## Same with the primer type.
+ba <- aggregate(y~a,d,mean) ; ba
+
+## Primer types for each row in d
+d$a
+
+## What is the corrisponding yba (similar to previous approach)
+yba[d$a]
+ba$y[d$a]
+
+## Back to what we were trying to do.
+## n * sum_i^a,sum_j^b (ybij-ybi-ybj-yb)^2
+bab
+
+## oh boy.
+bab$y
+
+## What is the yba for each row in bab
+bab$a
+
+yba
+
+## Same for yba
+yba[bab$a]
+
+bab$b
+
+ybb
+
+ybb[bab$b]
+
+## Here we go.
+ssab <- n*sum((bab$y-yba[bab$a]-ybb[bab$b]+yb)^2) ; ssab # [1] 0.2411111
+```
+
+### 2k Factorial Design (Section 14-5)
+
+k=3 or more
+
+```{r}
+## Signs
+expand.grid(A=c('-','+'),B=c('-','+'),C=c('-','+'))
+
+## More useful if it is +1 and -1
+t <- expand.grid(A=c(-1,+1),B=c(-1,+1),C=c(-1,+1))
+t$AB <- t$A*t$B
+t$BC <- t$B*t$C
+t$ABC <- t$A*t$B*t$C
+t$I <- 1
+t
+
+## Same as the text, can you determine the Treatment Combination?
+
+## Note the properties, equal + and - except the identity, columns are orthogonal.
+## A^2 B^2 C == C since any column multiplied by itself is I
+t$AB*t$ABC
+
+## Load data, Example 14.2
+d <- ch14[c('Example14.2Roughness','Example14.2Feed','Example14.2Depth','Example14.2Angle')]
+names(d) <- c('y','A','B','C')
+N <- nrow(na.omit(d)) ; d <- d[1:N,] ; N # [1] 16
+d
+
+## Again, simple problem, interesting data manipulation.
+s <- aggregate(y~A+B+C,d,sum) ; s 
+
+## check it matches the table in the text, same order, no need to change.
+
+## Main effect of A is Contrast_A/(n2^(k-1))
+k <- 3; n <- 2 ; n*2^(k-1)
+
+sum(s$y*t$A)/(n*2^(k-1)) # [1] 3.375
+
+## Sum Squares (Contrast_A)^2/(n2^k)
+n*2^k # [1] 16
+
+sum(s$y*t$A)^2/(n*2^k) # [1] 45.5625
+
+## This is a simple Regression/ANOVA
+m <- aov(y~A*B*C,d) ; summary(m)
+```
+
+We are not going to bother with regression as we can find it
+with the contrasts and R does not easily compute it directly.
+F-values are similar in nature to the t-stats.
+
+```{r}
+## Residual analysis with A, B and AB
+m <- aov(y~A+B+A*B,d) ; summary(m)
+plot(m)
+
+## Note we can get the only the primary and secondary effects if we do the following
+summary(aov(y~(A+B+C)^2,d))
+```
+See the manual for more details on formulas.
+
+```{r}
+## Example 14.4
+d1 <- c(9,10,9,12,11,10,10,16)
+d2 <- c(7,12,11,15,10,13,8,14)
+
+d1+d2
+
+sum(d1+d2) # [1] 177
+
+y <- c(d1,d2) ; y 
+
+mean(y) # [1] 11.0625
+
+sum((y-mean(y))^2) # [1] 92.9375
+```
+

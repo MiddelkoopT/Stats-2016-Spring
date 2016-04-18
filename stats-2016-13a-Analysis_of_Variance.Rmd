@@ -1,0 +1,164 @@
+# Engineering Statistics
+IMSE 4410 Spring 2016.  Copyright 2013-2016 by Timothy Middelkoop License CC by SA 3.0
+
+## Analysis of Variance (AoV) - Chapter 13
+
+* Regression is generally for prediction of continuous variables.
+* AoV is generally for the explanation of factors/levels.
+
+We follow the following procedure:
+1. Conjecture
+2. Experiment
+3. Analysis
+4. Conclusion and revise conjecture.
+
+### Factors in R
+```{r}
+## Lets say we have an experiment that we encode as follows
+d <- c(1,2,3,2,3,3,3,3,2,3,2,3)
+
+## A 1 is Apple, 2 is Banana, 3 is Carrot.
+f <- factor(d,labels=c('Apple','Banana','Carrot')) ; f
+
+## This can also be done directly 
+factor(c('Cat','Dog','Dog'))
+```
+
+### Load Example Data.
+```{r}
+ch13 <- read.csv("data/5e/ch13.csv",header=TRUE)
+nrow(ch13)
+```
+
+### Completely Randomized Single Factor.
+
+We have a baseline experiment with some $\mu$ and do something to it.
+What we do is apply a "factor" which has different "levels."
+
+Test all combinations in random order.  Random order is very important.
+
+* We have $a$ 'levels' (treatments) of each 'factor' and use the index $i$ (rows).
+* We have $n$ 'observations' (replicates) of each level and use the index $j$ (columns)
+* There are a total of $N=a\cdot n$ samples
+
+See the text for the $y_{i\cdot}$, $\bar y_{\cdot\cdot}$, etc. notation and your notes for the the construction of the analysis table done in class (Table 13-1 and Table 13-2). 
+
+The *linear statistical model* is
+$$Y_{ij}=\mu + \tau_i+ \epsilon_{i,j}$$
+
+Where $\tau_i$ is the treatment effect and $\mu$ is the grand mean and defined such that $\sum \tau_i = 0$.
+
+### Sum of squares identity
+$$SS_T=SS_F+SS_E$$
+$$\sum_{i=1}^a\sum_{j=1}^n(y_{ij}-\bar y_{\cdot\cdot})^2 = n \sum_{i=1}^a(\bar y_{i\cdot}-\bar y_{\cdot\cdot})^2 + \sum_{i=1}^a\sum_{j=1}^n(y_{ij}-\bar y_{i\cdot})^2$$
+
+
+```{r}
+d <- na.omit(data.frame(y=ch13$Example13.1Strength,x=ch13$Example13.1Concentration))
+d$y
+d$x
+d$x <- factor(d$x) ; d$x
+
+## 'N' Number of samples
+N <- length(d$x) ; N
+
+## We have 'a' levels in the factor.
+a <- length(levels(d$x)) ; a
+
+## 'n' Number of  observations
+n <- N/a ; n
+
+## we have the data but it is not in a nice table.
+## we aggregat the 'y' by 'x', that is we create groups of 'y' defined by 'x' (the right side of the equation)
+## the 'c' function just says we want groups of vectors.
+yij <- aggregate(y~x,d,c) ; yij
+
+## Since we are not interested in only the y(ij) we just select it for a ordered table.
+yij <- aggregate(y~x,d,c)$y ; yij
+
+## We can get statistics from this.
+ysi <- aggregate(y~x,d,sum) ; ysi
+sum(ysi$y) # [1] 383
+
+## Again note the x column (the group), since we are not doing the analysis with data.frame we extract it
+ysi <- aggregate(y~x,d,sum)$y ; ysi
+
+## average "within" treatments.
+ybi <- aggregate(y~x,d,mean)$y ; ybi
+
+## grand mean.
+yb <- mean(d$y) ; yb # [1] 15.95833
+
+## Same (why?)
+mean(ybi) # [1] 15.95833
+
+## Compute SST, SSF, and SSE
+sst <- sum((d$y-yb)^2) ; sst # [1] 512.9583
+ssf <- n*sum((ybi-yb)^2) ; ssf # [1] 382.7917
+sse <- sum((yij-ybi)^2) ; sse # [1] 130.1667
+
+## Verify sst=ssf+sse
+ssf + sse
+
+## Functional method.
+m <- aov(y~x,d) ; s <- summary(m) ; s
+
+## SST is the sum of SumSq column in anova
+v <- anova(m) ; a
+names(v)
+sum(v['Sum Sq'])
+```
+
+
+### Estimate $\sigma^2$
+
+We first need to estimate $\sigma^2$ with the *error mean square*, which is an unbiased estimator.
+$$\hat\sigma^2 = MS_E = {SS_E \over a(n-1)}$$
+
+$$MS_F = {SS_F \over a-1}$$
+
+```{r}
+## mean square for treatments
+msf <- ssf/(a-1) ; msf # [1] 127.5972
+
+## MSe is an unbias estimator for sigmasq.
+mse <- sse/((a*(n-1))) ; mse # [1] 6.508333
+```
+
+### AoV F-Test
+
+## We want to test if at least one treatment is significant
+* H0: $\tau_1=\tau_2=\dots = \tau_a = 0$
+* H1: At least one $\tau_i$ is non zero.
+* Test Statistic:
+
+$$F_0 = { MS_F \over MS_E }$$
+
+Follows the F-distribution with $(a-1)$ and $a(n-1)$ degrees of freedom.
+
+```{r}
+## F0
+F0 <- msf/mse ; F0 # [1] 19.60521
+
+## Construct a 95% CI on a treatment mean.
+## 20% hardwood yb_4=21.16
+ybi[4] # [1] 21.16667
+
+alpha <- 0.05
+me <- qt(alpha/2,a*(n-1))*sqrt(mse/n)
+ybi[4]+me; ybi[4]-me
+
+## Or use the function
+p <- predict(m,interval="confidence") ; p[1,]
+
+## Query from the table
+d$lwr <- p[,'lwr'] 
+d$upr <- p[,'upr']
+d[d$x==20,]
+
+## View boxplot
+boxplot(y~t,d)
+
+## Model diagnostics.
+plot(m)
+```

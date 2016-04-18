@@ -1,0 +1,139 @@
+# Engineering Statistics
+IMSE 4410 Spring 2016.  Copyright 2013-2016 by Timothy Middelkoop License CC by SA 3.0
+
+## Analysis of Variance (AoV) - Chapter 13
+
+```{r}
+ch13 <- read.csv("data/5e/ch13.csv",header=TRUE)
+nrow(ch13)
+```
+
+### Randomized Complete Block (Section 13-4)
+
+Now the experiments are in "blocks." Additional variation is between between blocks (think different fields).  
+
+* Each 'block' has 'a' observations indexed by $i$ and there are 'b' blocks indexed by $j$.
+
+The *linear statistical model* is
+$$Y_{ij}=\mu + \tau_i + \beta_j + \epsilon_{i,j}$$
+
+Where $\tau_i$ is the treatment effect and $\mu$ is the grand mean and defined such that $\sum \tau_i = 0$ and $\sum \mu_j = 0$ and $\epsilon_{ij}$ is normally and independently distributed with mean of zero and variance of $\sigma^2$.
+
+The *sum of squares identity* for the *randomized complete block design*
+
+$$SS_T=SS_F + SS_B + SS_E$$
+$$\sum_{i=1}^a\sum_{j=1}^b(y_{ij}-\bar y_{\cdot\cdot})^2 = b \sum_{i=1}^a(\bar y_{i\cdot}-\bar y_{\cdot\cdot})^2 + a \sum_{j=1}^b(\bar y_{\cdot j}-\bar y_{\cdot\cdot})^2 + \sum_{i=1}^a\sum_{j=1}^b(y_{ij}-\bar y_{i\cdot} -\bar y_{\cdot j} + \bar y_{\cdot\cdot})^2$$
+
+*Degrees of Freedom*
+$$(ab-1)=(a-1)+(b-1)+(a-1)(b-1)$$
+
+Using this we can calculate $F_0$ and the mean squares similarly using the above information.
+
+```{r}
+d <- na.omit(data.frame(y=ch13$Example13.5Strength,a=factor(ch13$Example13.5Chemical)))
+N <- nrow(d) ; N
+
+## we now have b blocks and a treatments.
+a <- length(levels(d$a)); a # [1] 4
+
+## Look at the data in table format.
+aggregate(y~a,d,c)
+
+boxplot(y~a,d)
+
+## Complete block so we can do
+b <- N/a ; b # [1] 5
+
+## We assume blocks are reported sequentially, add the information
+
+## A little magic-foo.
+rep(1:b,times=a)
+
+## and some more
+rep(1:a,each=b)
+
+## Add it to our data.frame
+d$b <- factor(rep(1:b,times=a)) ; d[c(1,2,19,20),]
+
+## Now we need to extract some information, mainly ybi, ybj
+## Verify with example.
+
+## row sums like last time, sum of the treatments (x is now a).
+aggregate(y~a,d,sum)
+
+## ybi is the row average like last time, the sum of the treatments (ybi contains the y column.
+ybi <- aggregate(y~a,d,mean)$y ; ybi
+
+## now columns are just symmetric.
+aggregate(y~b,d,sum)
+
+## ybj
+ybj <- aggregate(y~b,d,mean)$y ; ybj
+
+## yb
+yb <- mean(d$y) ; yb # [1] 1.96
+
+## Should match
+mean(ybj) ; mean(ybi)
+
+## Now lets compute using the function versions
+m <- aov(y~a+b,d) ; summary(m)
+```
+
+### Randomized Block Computations.
+
+Compute by hand. Equation 13-27, sum of squares identity for randomized block. Note the split between the treatments and blocks $ssf = ssa + ssb + sse$.  We also use ssa and ssf interchangeably.
+
+```{r}
+sst <- sum((d$y-yb)^2) ; sst # [1] 25.688
+
+## run ybi-yb to make sure it does what you expect.
+ssa <- b*sum((ybi-yb)^2) ; ssa # [1] 18.044
+
+ssb <- a*sum((ybj-yb)^2) ; ssb # [1] 6.693
+
+## We cheat again.
+sse <- sst - ssb - ssa ; sse # [1] 0.951
+
+## How do we do this it is a bit different than before, we need to use the indexes directly for ybi and ybj. This is done by storing i and j in the data.frame.
+
+## yij is treatment i, block j.
+
+## j is the block
+d$j <- rep(1:b,times=a) ; d$j
+
+d$i <- rep(1:a,each=b) ; d$i
+
+## Check
+d[c(1,2,19,20),]
+
+## Why are i and j the same as a and b ?
+
+## Now apply it element by element.
+## The term +yb comes from the fact that the "common" is removed twice/overlap.
+sse <- sum((d$y-ybj[d$j]-ybi[d$i]+yb)^2) ; sse # [1] 0.951
+
+## we can compute mse, msb, msf fromthe text to compute F0.
+## Use the "new" definitions.
+
+msf <- ssa/(a-1) ; msf # [1] 6.014667
+
+msb <- ssb/(b-1) ; msb # [1] 1.67325
+
+mse <- sse/((a-1)*(b-1)) ; mse # [1] 0.07925
+
+## F value for the treatment, so blocking is a factor.
+F0 <- msf/mse ; F0 # [1] 75.89485
+
+## To be symmetric, the F value for the blocking
+msb/mse # [1] 21.11356
+
+## Verify with functions.
+m <- aov(y~a+b,d) ; summary(m)
+v <- anova(m)
+sum(v['Sum Sq'])
+
+## Modle Diagnostics
+plot(m)
+
+```
