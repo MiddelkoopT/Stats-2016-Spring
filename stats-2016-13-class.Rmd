@@ -1,0 +1,51 @@
+# Engineering Statistics
+IMSE 4410 Spring 2016.  Copyright 2013-2016 by Timothy Middelkoop License CC by SA 3.0
+
+## Analysis of Variance (AoV) - In Class
+### Factors in R
+```{r}
+d <- c(1,2,3,2,1,2,3,2,2,2,2) ; d
+f <- factor(d,label=c('Apple','Banana','Carrot')) ; f
+summary(f)
+
+factor(c('Cat','Dog','Cat'))
+
+```
+
+
+### Load Example Data.
+```{r}
+ch13 <- read.csv("data/5e/ch13.csv",header=TRUE)
+
+d <- na.omit(data.frame(y=ch13$Example13.1Strength,x=ch13$Example13.1Concentration))
+
+d$x
+d$y
+
+d$x <- factor(d$x) ; d$x
+levels(d$x)
+a <- length(levels(d$x)) ; a
+N <- length(d$y) ; N
+n <- N/a ; n
+
+aggregate(y~x,d,c)
+aggregate(y~x,d,sum)
+aggregate(y~x,d,sum)$y
+ybi <- aggregate(y~x,d,mean)$y ; ybi
+yb <- mean(ybi) ; yb
+mean(d$y)
+
+yij <- aggregate(y~x,d,c)$y ; yij
+yij[2,3]
+
+## SST = sum(yij-yb)^2
+sst <- sum(rowSums((yij-yb)^2)) ; sst
+
+ssf <- n*sum((ybi-yb)^2); ssf
+sse <- sum((yij-ybi)^2) ; sse
+
+ssf + sse
+sst <- sum((yij-yb)^2) ; sst
+
+
+```

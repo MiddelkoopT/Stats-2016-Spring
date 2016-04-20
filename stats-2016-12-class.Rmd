@@ -1,0 +1,98 @@
+# Engineering Statistics
+IMSE 4410 Spring 2016. Copyright 2013-2016 by Timothy Middelkoop License CC by SA 3.0
+
+## Multiple Linear Regression - Chapter 12
+
+```{r}
+ch12 <- read.csv("data/5e/ch12.csv",header=TRUE)
+nrow(ch12)
+
+d <- na.omit(data.frame(y=ch12$Example12.1S,c=1,x1=ch12$Example12.1L,x2=ch12$Example12.1H)) ; n <- nrow(d)
+d
+
+plot(d)
+m <- lm(y~x1+x2,d) ; summary(m)
+plot(m)
+
+d$y[1:3]
+d$x1[1:3]
+d$x2[1:3]
+
+```
+
+### Basic Matrix Operations
+```{r}
+names(d)
+y <- data.matrix(d[1]); y
+x <- data.matrix(d[2:4]) ; x
+bh <- solve(t(x) %*% x) %*% t(x) %*% y ; bh
+summary(m)
+yh <- x %*% bh ; yh
+e <- y-yh  ; e
+plot(e)
+sse <- sum(e^2) ; sse
+summary(m)
+anova(m)
+plot(d)
+```
+
+```{r}
+a <- matrix(c(1,2,3,4,5,6),2,3)
+t(a)
+a + a
+a %*% t(a)
+solve(a %*% t(a))
+```
+
+### Quadratic
+
+```{r}
+d <- na.omit(data.frame(y=ch12$Example12.12y,x=ch12$Example12.12x))
+n <- nrow(d) ; n
+plot(y~x,d)
+m <- lm(y~x,d) ; summary(m)
+
+m <- lm (y~x+I(x^2),d) ; summary(m)
+
+```
+
+
+### Wine
+```{r}
+d <- na.omit(data.frame(quality=ch12$Example12.14Quality,clarity=ch12$Example12.14Clarity, aroma=ch12$Example12.14Aroma, body=ch12$Example12.14Body, flavor=ch12$Example12.14Flavor, oakiness=ch12$Example12.14Oakiness)) ; n <- nrow(d) ; n
+plot(d)
+
+m <- lm(quality~clarity+aroma+body+flavor+oakiness,d) ; summary(m)
+
+m <- lm(quality~clarity,d) ; summary(m)
+
+m <- lm(quality~aroma,d) ; summary(m)
+
+m <- lm(quality~body,d) ; summary(m)
+
+m <- lm(quality~flavor,d) ; summary(m)
+
+m <- lm(quality~oakiness,d) ; summary(m)
+
+## Second round
+m <- lm(quality~flavor+clarity,d) ; summary(m)
+m <- lm(quality~flavor+aroma,d) ; summary(m)
+m <- lm(quality~flavor+body,d) ; summary(m)
+m <- lm(quality~flavor+oakiness,d) ; summary(m)
+
+# Oakiness
+m <- lm(quality~flavor+oakiness+clarity,d) ; summary(m)
+m <- lm(quality~flavor+oakiness+aroma,d) ; summary(m)
+m <- lm(quality~flavor+oakiness+body,d) ; summary(m)
+
+m <- lm(quality~flavor+oakiness+aroma+clarity,d) ; summary(m)
+anova(m)
+
+##
+m <- lm(quality~flavor+oakiness+aroma,d) ; summary(m)
+anova(m)
+
+m <- lm(quality~flavor+oakiness,d) ; summary(m)
+anova(m)
+
+```
