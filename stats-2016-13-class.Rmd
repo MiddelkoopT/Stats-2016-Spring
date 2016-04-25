@@ -47,5 +47,15 @@ sse <- sum((yij-ybi)^2) ; sse
 ssf + sse
 sst <- sum((yij-yb)^2) ; sst
 
+m <- aov(y~x,d) ; summary(m) 
+
+boxplot(y~x,d)
+
+```
+
+## Class 2 of AoV
+
+```{r}
+
 
 ```
