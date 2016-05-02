@@ -1,0 +1,48 @@
+# Introduction to Engineering Statistics and R 
+Engineering Statistics (IMSE 4410) Spring 2016.
+Copyright 2013-2016 by Timothy Middelkoop License CC by SA 3.0
+
+## Candy Analysis.
+
+```{r}
+## Sample data
+d <- read.csv('m-m.csv',header=TRUE) ; nrow(d)
+# Red Yellow Blue Green Orange Brown
+colors <- names(d) ; colors
+
+## Class input
+# 95196: Red	1	95197: Green	1	95198: Yellow	1	95199: Blue	1	95200: Brown	1	95201: Orange
+f <- read.csv('~/../Downloads/Candy Survey Student Analysis Report.csv') ; nrow(d)
+colors <- c('Red','Green','Yellow','Blue','Brown','Orange') ; colors
+loc <- c(9,11,13,15,17,19)
+f[loc]
+
+d <- f[loc] ; names(d) <- colors
+d
+
+## Look at the data
+
+summary(d)
+plot(d)
+
+## By package
+a <- d
+a['Total'] <- rowSums(d)
+plot(a$Total)
+hist(a$Total)
+
+hist(d$Red)
+hist(d$Green)
+hist(d$Yellow)
+hist(d$Blue)
+hist(d$Brown)
+hist(d$Orange)
+
+boxplot(d)
+
+m <- lm(Total~Red+Green+Yellow+Blue+Brown+Orange,d)
+summary(m)
+aov(m)
+
+
+```
