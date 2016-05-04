@@ -1,0 +1,63 @@
+---
+output: pdf_document
+---
+# Engineering Statistics
+IMSE 4410 Spring 2016.  Copyright 2013-2016 by Timothy Middelkoop License CC by SA 3.0
+
+## $2^k$ factorial design
+
+### Section 14-2
+
+```{r}
+# Table 14-1
+
+d <- data.frame(y=c(10,20,30,40),A=c(-1,-1,+1,+1),B=c(-1,+1,-1,+1)) ; d
+k <- length(d)-1 ; k
+n <- 1;
+
+## effect=contrast/(n2^(k-1)), ss=(contrast)^2/(n2^k)
+
+## Put it togher
+d$y
+d$y*d$A
+(n*2^(k-1))
+
+A <- sum(d$y*d$A)/(n*2^(k-1)) ; A
+B <- sum(d$y*d$B)/(n*2^(k-1)) ; B
+
+d$AB <- d$A*d$B ; d$AB
+AB <- sum(d$y*d$AB)/(n*2^(k-1)) ; AB
+
+## AB Interaction
+d <- data.frame(y=c(10,20,30,0),A=c(-1,-1,+1,+1),B=c(-1,+1,-1,+1)) ; d
+k <- length(d)-1 ; k
+n <- 1;
+
+A <- sum(d$y*d$A)/(n*2^(k-1)) ; A
+B <- sum(d$y*d$B)/(n*2^(k-1)) ; B
+
+# Text is wrong!
+d$AB <- d$A*d$B ; d$AB
+AB <- sum(d$y*d$AB)/(n*2^(k-1)) ; AB
+
+ssb <- sum(d$y*d$B)^2/(n*2^k) ; ssb
+ssab <- sum(d$y*d$AB)^2/(n*2^k) ; ssab
+
+m <-aov(y~A*B,d) ; summary(m)
+
+## Example 2
+d <- data.frame(y=c(10,12,20,18,30,33,0,2),A=c(-1,-1,-1,-1,+1,+1,+1,+1),B=c(-1,-1,+1,+1,-1,-1,+1,+1)) ; d
+k <- length(d)-1 ; k
+n <- 2;
+d$AB <- d$A*d$B ; d$AB
+
+A <- sum(d$y*d$A)/(n*2^(k-1)) ; A
+B <- sum(d$y*d$B)/(n*2^(k-1)) ; B
+AB <- sum(d$y*d$AB)/(n*2^(k-1)) ; AB
+ssa <- sum(d$y*d$A)^2/(n*2^k) ; ssa
+ssb <- sum(d$y*d$B)^2/(n*2^k) ; ssb
+ssab <- sum(d$y*d$AB)^2/(n*2^k) ; ssab
+
+m <-aov(y~A*B,d) ; summary(m)
+
+```
