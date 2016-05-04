@@ -5,6 +5,48 @@ Copyright 2013-2016 by Timothy Middelkoop License CC by SA 3.0
 ## Candy Analysis.
 
 ```{r}
+d <- read.csv('~/../Downloads/Candy Survey Student Analysis Report.csv',header=TRUE) ; nrow(d)
+loc <- c(9,11,13,15,17,19)
+colors <- c('Red','Green','Yellow','Blue','Brown','Orange') ; colors
+mm <- d[loc]
+names(mm) <- colors
+names(mm)
+
+summary(mm)
+
+plot(mm$Blue)
+
+mm2 <- mm[1:47,]
+mm2
+
+summary(mm2)
+
+hist(mm2$Red)
+hist(mm2$Green)
+hist(mm2$Yellow)
+hist(mm2$Blue)
+hist(mm2$Brown)
+hist(mm2$Orange)
+
+t <- rowSums(mm2) ; t
+plot(t)
+hist(t)
+boxplot(mm2)
+
+m <- lm(Blue~Red+Green+Yellow+Brown+Orange,mm2) ; summary(m)
+
+
+
+
+```
+
+
+
+
+
+
+
+```{r}
 ## Sample data
 d <- read.csv('m-m.csv',header=TRUE) ; nrow(d)
 # Red Yellow Blue Green Orange Brown
