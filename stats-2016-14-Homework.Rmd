@@ -1,0 +1,107 @@
+# Engineering Statistics 
+Engineering Statistics (IMSE 4410) Spring 2016. Copyright 2013-2016 by Timothy Middelkoop License CC by SA 3.0
+
+## Homework Chapter 14
+
+Chpater 14 (5e)
+
+```{r}
+ch14 <- read.csv("data/5e/ch14.csv",header=TRUE) ; nrow(ch14)
+
+## Construct a 2^4 table
+t <- expand.grid(A=c(-1,+1),B=c(-1,+1),C=c(-1,+1),D=c(-1,+1))
+t$AB <- t$A*t$B
+t$BC <- t$B*t$C
+t$CD <- t$C*t$D
+t$ABC <- t$A*t$B*t$C
+t$BCD <- t$B*t$C*t$D
+t$ABCD <- t$A*t$B*t$C*t$D
+t$I <- 1
+
+## Note the column order should be A B AB C AC BC ABC D AD BD ABD CD ACD BCD ABCD
+t
+
+## Example 14-5: Plasma Etch
+
+d <- ch14[c('Example14.5Etch','Example14.5Gap','Example14.5Pressure','Example14.5C2F6','Example14.5Power')]
+names(d) <- c('y','A','B','C','D')
+N <- nrow(na.omit(d)) ; d <- d[1:N,] ; N
+
+## These are properly encoded and one sample per row, no need to aggregate and use a table.
+d
+
+## main effect of A
+k <- ncol(d)-1; k  # [1] 4
+
+n <- N/(2^k) ; n # [1] 1
+
+## Effect A
+sum(d$A*d$y)/(n*2^(k-1)) # [1] -101.625
+
+## Sum Square A
+sum(d$A*d$y)^2/(n*2^k) # [1] 41310.56
+
+## Sum Square ABD
+sum(d$C*d$D*d$y)^2/(n*2^k) # [1] 18.0625
+
+## sst
+sum((d$y-mean(d$y))^2) # [1] 531420.9
+
+
+## Exercise 14-13
+
+## This one is interesting because we need to get the factor back in.
+## Like to real world, don't expect it to be in the form you want it.
+
+d <- ch14[c('Ex14.13.Rep.I','Ex14.13.Rep.II')]
+names(d) <- c('one','two')
+N <- nrow(na.omit(d)) ; d <- d[1:N,] ; N
+
+## Check your data
+d$one
+d$two
+
+## This one took a bit to figure out.  What did you get?
+
+## Make a single data column, not two (a single y)
+## Same order as the geometric table, so apply rows to it (first question)
+dd <- data.frame(y=c(d$one,d$two),A=t$A,B=t$B,C=t$C,D=t$D)
+
+m <- aov(y~A*B*C*D,dd) ; summary(m)
+
+## A,C,D and AD are significant.
+
+## Here is the linear model.
+m <- lm(y~A*B*C*D,dd) ; summary(m)
+
+
+## Exercise 14-27 (14-29 6e): Machine factors.
+names(ch14)
+d <- ch14[c('Ex14.27.Strength','Ex14.27.A','Ex14.27.B','Ex14.27.C','Ex14.27.D','Ex14.27.E')]
+names(d) <- c('y','A','B','C','D','E')
+N <- nrow(na.omit(d)) ; d <- d[1:N,] ; N
+
+## Double check.
+d$y
+
+## Factor
+dd <- data.frame(y=d$y,A=factor(d$A),B=factor(d$B),C=factor(d$C),D=factor(d$D),E=factor(d$E))
+
+## Look at effects and first order interactions.
+m <- aov(y~(A+B+C+D+E)^2,dd) ; summary(m)
+
+## All factors, this looks different
+m <- aov(y~A*B*C*D*E,dd) ; summary(m)
+
+m <- lm(y~A*B*C*D*E,dd) ; summary(m)
+
+## No residual degree of freedom?!
+## Oh, 32 parameters, 32 unknowns, perfect fit!
+## Goes to show you need to know what is going on.
+
+## C D and E look significant.
+m <- aov(y~C+D+E,dd) ; summary(m)
+
+plot(m)
+
+```
