@@ -65,3 +65,13 @@ Chapter 13 (5e)
    13-7-c do a TurkyHSD analysis instead, which is similar to the text analysis.
 3. Problem 13-13 using R functions.
 4. Problem 13-37 by hand, R with vectors, and functions.
+
+## Homework Chapter 14
+Chapter 14 (5e)
+
+1. Construct contrast table 2^4 by hand without copying (there is a pattern).
+2. Example 14-4 in the text.  Do the calculations by hand and using vectors and functions in R.
+3. Example 14-5 in the text.  Do the calculations by hand and using vectors and functions in R.  Only calculate Effect A, B, AB, CD, and sst.
+4. Exercise 14-13 (14-15 6e): Do by hand, then by using R functions.
+5. Exercise 14-27 (14-29 6e): Using R functions.
+
