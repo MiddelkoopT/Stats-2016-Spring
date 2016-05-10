@@ -1,0 +1,185 @@
+# Engineering Statistics 
+Engineering Statistics (IMSE 4410) Spring 2016.  Copyright 2013-2016 by Timothy Middelkoop License CC by SA 3.0
+
+## Homework Chapter 13
+
+Chpater 13 (5e)
+
+```{r}
+ch13 <- read.csv("data/5e/ch13.csv",header=TRUE) ; nrow(ch13)
+
+## 13-3 (13-5 6e) Cotton/synthetic fiber
+d <- na.omit(data.frame(t=factor(ch13$Ex13.3Percentage),y=ch13$Ex13.3Strength))
+d$t
+
+## Dump table to make sure it looks the way we expect.
+aggregate(y~t,d,c)
+
+n <- 5 ; a <- 5
+
+## vector method
+yb <- mean(d$y) ; yb # [1] 15.04
+
+## treatment means.
+ybi <- aggregate(y~t,d,mean)$y ; ybi
+
+## sst
+sst <- sum((d$y-yb)^2) ; sst # [1] 636.96
+
+## sse
+yij <- aggregate(y~t,d,c)$y
+sse <- sum((yij-ybi)^2) ; sse # [1] 161.2
+
+## ssf factor/treatment
+ssf <- n*sum((ybi-yb)^2) ; ssf # [1] 475.76
+
+## Verify
+sst ; ssf + sse
+
+msf <- ssf/(a-1) ; msf # [1] 118.94
+
+mse <- sse/((a*(n-1))) ; mse # [1] 8.06
+
+## F-Stat for the factor; H0: all treatment means=0; H1: one treatment is significant.
+F0 <- msf/mse ; F0 # [1] 14.75682
+
+## pvalue for the F-value
+pf(F0,a-1,a*(n-1),lower.tail=FALSE)
+
+## function
+m <- aov(y~t,d) ; summary(m) 
+
+## a) Significant?
+## Reject H0, the percentage of cotton affects breakage strength.
+boxplot(y~t,d)
+
+## b) plot.. same thing, these are factors so it does not make sense to make a "line" plot.
+plot(y~t,d)
+
+p <- predict(m,interval="confidence") ; p[1,]
+
+## c) Looks mostly reasonable. Not so normal on the tails but it is a small sample.
+plot(m)
+
+
+## 13-5 (13-7 6e) Compressive strength of concrete
+d <- na.omit(data.frame(t=factor(ch13$Ex13.5Mixing),y=ch13$Ex13.5Strength))
+d$t
+
+aggregate(y~t,d,c)
+
+## By hand is the same as 13-3.
+
+m <- aov(y~t,d) ; summary(m)
+
+## a) Model is significant, p<0.05 for the F-value
+
+plot(y~t,d)
+
+
+## 13-7 (13-9) Conductivity of coatings
+d <- na.omit(data.frame(t=factor(ch13$Ex13.7CoatingType),y=ch13$Ex13.7Conductivity))
+d$t
+
+aggregate(y~t,d,c)
+
+## By hand is the same as 13-3
+m <- aov(y~t,d) ; summary(m)
+
+## a) Is there any difference?  Yes, it is significant.
+## b) Analyze residuals.
+plot(m)
+
+## Residual v.s. fitted indicates that there may be another effect in play (it is skewed).
+## Point 7 is an outlier.
+
+## c) TurkyHSD
+TukeyHSD(m,"t")
+
+
+## 13-13 (13-15 6e) Cows Milk
+d <- na.omit(data.frame(t=factor(ch13$Ex13.13DietType),y=ch13$Ex13.13Protein))
+d$t
+
+## a)
+m <- aov(y~t,d) ; summary(m)
+
+
+## b) p-value 0.489, no significance
+##    variablility to random error (sse) is 
+names(m)
+sse <- sum(m$residuals^2) ; sse # [1] 12.36387
+
+## c) Barley has the highest average.
+plot(y~t,d)
+
+## d) Looks fine.
+plot(m)
+
+
+## 13-37 (13-47 6e): Nozzle design for Water Jets
+d <- na.omit(data.frame(t=factor(ch13$Ex13.37NozzleType),b=factor(ch13$Ex13.37Velocity),y=ch13$Ex13.37Shape))
+d$t
+d$b
+
+## the velocity is a nuisance factor (ignored) but is the block, this is a preview
+## of things to come
+
+## Check.
+aggregate(y~t,d,c)
+
+## This should be the transpose
+aggregate(y~b,d,c)
+
+## vector method
+n <- length(d$y) ; n
+b <- 6 ; a <- 5
+
+yb <- mean(d$y) ; yb # [1] 0.8586667
+
+## treatment means.
+ybi <- aggregate(y~t,d,mean)$y ; ybi
+
+ybj <- aggregate(y~b,d,mean)$y ; ybj
+
+## sst
+sst <- sum((d$y-yb)^2) ; sst
+
+## ssf factor/treatment
+ssf <- b*sum((ybi-yb)^2) ; ssf
+
+## ssb
+ssb <- a*sum((ybj-yb)^2) ; ssb
+
+## sse factor/i, block/j
+d$j <- rep(1:b,each=a)
+d$i <- rep(1:a,times=b)
+
+## Check.
+d
+
+sse <- sum((d$y-ybj[d$j]-ybi[d$i]+yb)^2) ; sse
+
+## Verify
+sst ; ssf + ssb + sse # [1] 0.2223467
+
+
+## Use R function
+m <- aov(y~t+b,d) ; summary(m)
+
+## a) plot the data.  
+
+## From aov, the factor has a signifiant affect on shape
+
+## Visually it affects measurement.
+plot(y~t+b,d)
+
+## b) 
+plot(TukeyHSD(m,"t"))
+TukeyHSD(m,"t")
+
+## c) variance analysis.
+plot(m)
+
+## Looks reasonable except there is some unexplained variance, residual is normally distributed.
+```
