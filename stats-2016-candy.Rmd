@@ -48,7 +48,7 @@ m <- lm(Blue~Red+Green+Yellow+Brown+Orange,mm2) ; summary(m)
 
 ```{r}
 ## Sample data
-d <- read.csv('m-m.csv',header=TRUE) ; nrow(d)
+d <- read.csv('stats-2016-candy-sample.csv',header=TRUE) ; nrow(d)
 # Red Yellow Blue Green Orange Brown
 colors <- names(d) ; colors
 
